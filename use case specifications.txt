@@ -1,0 +1,212 @@
+use case ID: 001
+Name: Register
+created by: Vineeth and Ram
+created date: 24-02-2026
+updated by: -
+updated date: -
+Actor: Student
+
+Description: Student can take admission or enroll for current semester
+
+Pre-Condition: valid seat allocation details for new admission. Promoted, valid student for current semester registration
+
+Post-Condition: registration acknowledgment and generate QR's  to access library and academics 
+
+Normal flow: new registration for new students. Login ,Fee payment ,log out for current students.
+
+Alternate flow: Invalid credentials, Failed payment retry.
+
+Frequency: Low(once a semester).
+
+Business rule: If registration is successful student gets access for library and academics.
+
+Assumptions: Admission data is available for new students. Promotion status of current students is updated in the system. Fee payment system is operational. QR generation system is functional. Student academic and library systems are integrated. Internet connectivity is available during registration.
+
+Use Case ID: 002
+Name: Hostel Registration
+Created by: Vineeth & Ram
+Created date: 24-02-2026
+Updated by: -   
+Updated date: -
+Actor: Student 
+
+Description: Student while or after taking admission can apply for a room in hostel.
+
+Pre-Condition: Should be a valid student and rooms in hostel should be available. 
+
+Post-Condition: Successful allocation of room in hostel and access to mess. 
+
+Normal Flow: Apply for hostel at the time of registration. Current students can login and apply for hostel. 
+
+Alternate Flow: Invalid credentials for new admission( credentials like distance form univ or college). NO availability of room for current semester or invalid login credentials.  
+
+Frequency: Low
+
+Business rule: If the student have all the valid credentials and there are rooms available, then a room should be allocated to that student.
+
+Assumptions: Student admission data is already available in the system. Distance information provided by the student is accurate. Hostel room availability data is updated regularly. Hostel eligibility criteria are predefined in the system. Hostel allotment system is functioning properly. Mess access is automatically linked to hostel allocation. Internet connectivity and system services are available during application.
+
+Use Case ID:003
+Name: Academics
+Created by: Vineeth and Ram
+Created date: 24-02-2026
+Updated by: -
+Updated date: -
+Actor: Student
+Description: Student can access academic related details like attendance, grades, courses etc..
+Pre-Condition: Valid account credentials and semester registration for current students 
+Post-Condition: Can access his academic details
+Normal Flow: Login , access academic related details, log out.
+Alternate Flow: Invalid credentials or semester registration not done
+Frequency: Very Frequent 
+Business rule: Students will have their academic details at their fingertips.
+Assumptions: Students academic details and registration details are to be updated by admin in data base.
+
+Use Case ID: 004
+Name: Library Access
+Created By: Vineeth and Ram
+Created Date: 24-02-2026
+Updated By: -
+Updated Date: -
+Actor: Student
+Description: Student can access library services such as viewing, searching and borrowing books.
+
+Pre-Condition: valid student and login credentials and must complete semester registration.
+
+Post-Condition: Student can view, search and borrow books from the library.
+
+Normal Flow: Student logs into the system. The system verifies semester registration. Student selects the Library module. Student searches or selects a required book. Student borrows the book. Student logs out.
+
+Alternate Flow: If login credentials are invalid, access is denied. If semester registration is not completed, library access is restricted.
+
+Frequency: Medium
+
+Business Rule: Library access is permitted only for students who have successfully completed semester registration. Students can borrow, view and search for books.
+
+Assumptions: Library database is updated with available books. Student registration data is synchronized with the academic system.
+
+
+
+Use Case ID: 005
+Name: Hostel and Mess Access
+Created By: Vineeth and Ram
+Created Date: 24-02-2026
+Updated By: -
+Updated Date: -
+Actor: Student
+
+Description: Students can view hostel details and mess details. Inside the hostel/mess module, students can access mess, book meals, view bills, pay bills and raise complaints.
+
+Pre-Condition: Student must have valid login credentials and should be a resident of that particular hostel.
+
+Post-Condition: Student can access hostel and mess services such as booking meals, viewing bills, paying bills and raising complaints.
+
+Normal Flow: Student logs into the system. Student selects the Hostel/Mess module. The system displays hostel and mess details. Student books special meals if required. Student views mess bills. Student makes payment for bills. Student raises complaints if needed. Student logs out.
+
+Alternate Flow: If login credentials are invalid, access is denied. If student has not opted for hostel, hostel and mess access is restricted, accessing mess in wrong mess is denied.
+
+Frequency: High(3 times a day)
+
+Business Rule: Hostel and mess access is available only for students who opt for hostel during admission.
+
+Assumptions: Hostel opt-in data is available in the system. Mess billing system is functional. Payment system is available. Complaint system is operational.
+
+
+Use Case ID: 006
+Name: Admin Management
+Created By: Vineeth and Ram
+Created Date: 24-02-2026
+Updated By: -
+Updated Date: -
+Actor: Admin / Department Admin
+
+Description: Admin verifies newly admitted students and creates login credentials for them. Department Admin can update academic details of students.
+
+Pre-Condition: valid login credentials.
+
+Post-Condition: Newly admitted students are verified and login credentials are generated. Academic details of students are updated.
+
+Normal Flow: Login, Admin verifies newly admitted students. Admin creates userid for verified students. Department Admin accesses student records. Department Admin updates academic details of students. Admin logs out.
+
+Alternate Flow: If login credentials are invalid, access is denied. If student verification fails, credentials are not created.
+
+Frequency: Frequent
+
+Business Rule: Only authorized Admin can verify students and generate login credentials. Only authorized Department Admin can update academic details.
+
+Assumptions: Newly admitted student data is available in the system. Admin roles and permissions are properly assigned. Academic records are accessible for updates.
+
+
+Use Case ID: 007
+Name: Professor Course Management
+Created By: Vineeth and Ram
+Created Date: 24-02-2026
+Updated By: -
+Updated Date: -
+Actor: Professor
+
+Description: Professor can view their assigned course details and course history. Professor can also update student attendance and exam grades for their assigned course.
+
+Pre-Condition: Professor must have valid login credentials and must be assigned to a course.
+
+Post-Condition: Professor can view course details and history. Student attendance and exam grades are updated for the assigned course.
+
+Normal Flow: Professor logs into the system. Professor views assigned course details. Professor checks course history. Professor selects the assigned course. Professor updates student attendance. Professor updates exam grades. Professor saves the updates. Professor logs out.
+
+Alternate Flow: If login credentials are invalid, access is denied. If professor tries to access a course not assigned to them, access is restricted.
+
+Frequency: Frequent
+
+Business Rule: Professor can view and manage only the courses assigned to them.
+
+Assumptions: Course assignment data is available in the system. Course history records are maintained. Student enrollment data is accurate. Academic records system is operational.
+
+
+Use Case ID: 008
+Name: Hostel and Mess Management
+Created By: Vineeth and Ram
+Created Date: 24-02-2026
+Updated By: -
+Updated Date: -
+Actor: Warden
+
+Description: Warden verifies the students who have opted for hostel and allots rooms to them. Warden also manages and maintains hostel and mess facilities.
+
+Pre-Condition: Warden must have valid login credentials.
+
+Post-Condition: Eligible students are verified and rooms are allotted. Hostel and mess records are maintained.
+
+Normal Flow: Warden logs into the system. Warden verifies students who opted for hostel. Warden allots rooms to eligible students. Warden updates hostel details. Warden manages mess facilities. Warden logs out.
+
+Alternate Flow: If login credentials are invalid, access is denied. If rooms are not available, room allotment is not done.
+
+Frequency: Frequent
+
+Business Rule: Only students who opted for hostel are eligible for room allotment.
+
+Assumptions: Student hostel opt-in data is available. Room availability data is updated. Mess and hostel management system is operational.
+
+
+Use Case ID: 009
+Name: Librarian
+Created By: Vineeth and Ram
+Created Date: 26-02
+Updated By: -
+Updated Date: -
+Actor: Librarian
+
+Description: Librarian manages library operations including verifying students through QR scan, issuing books, accepting returns, and maintaining library records.
+
+Pre-Condition: Librarian must have valid login credentials and student must have completed semester registration
+
+Post-Condition: Books are issued or returned successfully and library records are updated
+
+Normal Flow: Librarian logs into the system. Librarian scans student QR code. System verifies student eligibility. Librarian checks book availability. Librarian issues the book to the student. Librarian records book return when returned. System updates borrowing records. Librarian logs out
+
+Alternate Flow: If login credentials are invalid, access is denied. If student is not eligible, book cannot be issued. If book is not available, issue request is denied
+
+Frequency: Frequent
+
+Business Rule: Books can be issued only to eligible students with valid registration and within borrowing limits
+
+Assumptions: Library database is updated. Student eligibility status is available. QR verification system is functioning properly

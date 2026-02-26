@@ -1,0 +1,72 @@
+Problem Statement:- Build a QR based ID cards for students for academics and non-academic purpose
+
+1. TECHNICAL FEASIBILITY
+The project is highly feasible using modern web technologies.
+
+Architecture: A MERN (MongoDB, Express, React, Node) or MYSQL for handling the relational data between Mess, Library, and Academics.
+
+QR Technology: Open-source libraries like html5-qrcode allow any device with a camera (smartphone/laptop) to act as a scanner, eliminating the need for expensive scanner devices.
+Scanning Technology:- Developing a technology where server and mobile is connected to same wifi and Ngrok is used to send HTTPS request for scanning QR's
+
+2. OPERATIONAL FEASIBILITY
+Students are already familiar with QR codes for UPI payments, many online registrations and as authentication tokens so using QR codes as ID cards students may face zero difficulties.
+Advantages: It replaces manual registers with automated timestamps, reducing staff workload.
+Data Integrity: Centralized records prevent "proxy" attendance or unauthorized meal collection.
+
+
+3. FUNCTIONAL DEPENDENCIES
+These are the core features the system must have to operate:
+Unique Identification: Every student profile must link to a unique ID mapped to a QR code.
+
+Module Integration:
+Hostel: Checks for request from admin whether the student chooses for hostel and generate QR for mess use.
+Mess: Must check "Subscription Status" before granting entry.
+Library: Must check "Outstanding Fines" or "Book Limit" before issuing new books.
+Academics:
+Must verify "Course Enrollment" before logging attendance.
+Can used as hall ticket.
+Students can view attendance and results.
+Real-time Database Sync: Scans must update the backend instantly to prevent double-entry or fraud.
+
+4. NON-FUNCTIONAL DEPENDENCIES (SYSTEM CONSTRAINTS)
+
+Performance (Latency): The QR scan-to-validation process must occur in under 2 seconds to prevent queues at entry points and minimum staff should be present to validate QR's.
+Availability: The system must have 99.9% up time, especially during meal times and library hours.
+Security: QR codes should be Encrypted/Dynamic to prevent students from sharing screenshots of their ID.
+Usability: The admins interface must be Mobile-First, as staff will likely use smartphones or tablets for scanning.
+The system must handle "Offline Buffering" or graceful error messages if the campus Wi-Fi drops momentarily or network is down during any particular time.
+
+5. ECONOMIC FEASIBILITY
+Low Software cost: As most of the technologies we use are free no cost is required for software development. 
+Low Hardware Cost: As we try to design scanning interfaces thru mobile no extra hardware is required.
+Low Maintenance: Digital updates are cheaper than reprinting lost physical ID cards with magnetic strips.
+Resource Optimization:
+As we can see students how registered meals in 24 hours advance we can optimise wastage of food.
+No extra registers are required for library and mess management.
+
+
+Tentative Modules:-
+Admin
+Staff - Academic(Attendance,Results), Mess, Library etc..
+Students: Academics,Library and Mess
+
+Work Flow:
+
+Admin register student and generate unique ID
+Student can create a account using ID and can access using login credentials
+Students academics and library is enabled as soon as student is registered 
+Hostel and mess services are enabled if students chooses hostel services
+
+Student when login to their account can see a QR which they can use it for academic purpose.
+Can lend books form library using QR and can see books history and any dues if present.
+Can use QR as mess card, apply for leaves, book special meals, manage mess charges and apply for any hostel services.
+
+Admin can enroll students for courses,manage fees, generate hall tickets and manage students.
+Library staff can manage library records for every student.
+Academic staff will enter attendance, results and any academic related things.
+Warden can manage hostel residence records, mess charges, bills and hostel management.
+
+
+
+
+

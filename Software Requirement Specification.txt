@@ -1,0 +1,102 @@
+Software Requirement Specification (SRS): SmartID QR System
+1. Introduction:
+
+1.1 Purpose
+The purpose of this document is to outline the requirements for a unified student management web portal. It aims to replace manual logging with an encrypted QR code system for mess entry, library management, and academic tracking.
+
+1.2 Scope
+The system will provide a centralized platform for students to generate their digital IDs and for campus staff (Mess, Library, Faculty) to authenticate services via quick scans.
+
+1.3 Definitions, Acronyms, and Abbreviations
+QR: Quick Response Code.
+SRS: Software Requirement Specification.
+UUID: Universally Unique Identifier.
+AES: Advanced Encryption Standard.
+
+1.4 References
+Standard IEEE 830-1998 for SRS Documentation.
+Institutional Administrative Guidelines.
+
+1.5 Overall Description
+A web-based ecosystem that bridges fragmented campus departments into one data-driven hub using unique digital identifiers.
+
+2. Overall Description:
+
+2.1 Product Perspective
+This system operates as a standalone web application but is designed to integrate with existing student registrar databases.
+
+2.2 Product Function
+QR Generation: Automated creation of unique, encrypted codes.
+Service Authentication: Contactless verification for mess and library.
+Record Tracking: Real-time updates for attendance and fine management.
+
+2.3 User Characteristics
+Students: High tech-literacy; primarily mobile users.
+Staff: Moderate tech-literacy; require a simple, fast-action interface.
+Admins: High-level access for data oversight and reporting.
+
+2.4 User Constraints
+Must have a device with a working camera for scanning.
+Stable internet connection required for real-time database syncing.
+
+2.5 Assumptions & Dependencies
+Assumptions: All students possess a smartphone or a printed physical ID card with the QR code.
+Dependencies: Reliant on a stable cloud database and server-side encryption services.
+
+3. Specific Requirements:
+
+3.1 Interface Requirements:
+
+3.1.1 External Interface: Integration with campus notification systems (Email/SMS).
+3.1.2 Hardware Interface: Compatibility with standard smartphone cameras and PC webcams.
+3.1.3 Software Interface: Support for modern browsers (Chrome, Safari, Firefox).
+3.1.4 Communication Interface: Secure HTTPS protocols for all data transmission.
+
+3.2 Functional Requirements:
+
+3.2.1 Use Case Model Information Flow
+Student Requests QR -> System Generates Encrypted ID -> Stored in DB.
+Staff Scans QR -> Data Decrypted -> Validated against Records -> Access Logged.
+3.2.2 Use Case Specification
+Parameter: Details (Example: Mess Entry)
+Use Case: ID	UC-01
+Name: Authenticate Mess Entry
+Actor: Mess Staff, Student
+Description: Verify eligibility and log meal entry.
+Pre-condition: Student must have an active meal plan.
+Normal Flow: Scan -> Validate -> Grant Access -> Log Entry.
+Alternate Flow: Expired Plan -> Deny Access -> Display Error.
+Priority: High
+Business Rule: One entry per student per meal session.
+3.2.3 Analysis Classes / Data Dictionary
+Class Student: ID, Name, QR_String, Status.
+Class Transaction: Scan_ID, Timestamp, Location, Result.
+
+3.3 Performance Requirements
+Scanning to validation response time must be < 1.5 seconds.
+System must support 500+ concurrent users during peak hours.
+
+3.4 Logical Database Requirements
+Relational tables for Students, Library_Books, Mess_Log, and Attendance.
+Foreign Key integrity between Student_ID and all service modules.
+
+3.5 Design Constraints
+Design constraints are the limitations and standards that must be followed while building the system to ensure it is compatible with the institution's environment.
+Platform Constraints: The system must be developed as a Web-based application to ensure cross-platform compatibility across various operating systems (Windows, Android, iOS) without requiring separate native app installations.
+User Interface (UI) Standards: The interface must be Mobile-Responsive, as the primary hardware for scanning (at mess halls and library counters) will be smartphones or tablets.
+Security Standards: All QR data must be generated using encryption algorithms (like AES) to prevent students from tampering with or duplicating their IDs.
+Regulatory Compliance: The system must adhere to university data privacy policies regarding the storage of student personal information and academic records.
+Language & Tools: The development must use modern, stable frameworks (e.g., React/Node.js or Django) to ensure the system is maintainable by the college's IT department in the future.
+
+3.6 Software System Attributes:
+
+3.6.1 Reliability: The system must maintain a 99.9% uptime during operational hours (specifically during meal times and class hours).
+3.6.2 Availability: The web portal should be accessible 24/7 for students to view their profiles and academic data.
+3.6.3 Security: Implementation of JWT (JSON Web Tokens) for secure login sessions and role-based access control (RBAC) to ensure staff cannot access admin-level data.
+3.6.4 Maintainability: The application must use a modular architecture, allowing new features (like hostel management or fee payments) to be added without rewriting existing code.
+3.6.5 Portability: The software must be browser-agnostic, functioning identically on Chrome, Firefox, Safari, and Edge.
+
+4. Supporting Information
+This section includes any extra material required for the professor to understand the project's technical depth:
+Data Dictionary: Definitions for every field in your database (e.g., Student_ID, QR_Hash, Meal_Status).
+User Manuals: Brief guides for mess staff and library staff on how to operate the scanning interface.

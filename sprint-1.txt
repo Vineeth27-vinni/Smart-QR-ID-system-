@@ -1,0 +1,59 @@
+Registration and QR generation modules 
+
+Start Date: 10th march 2026
+End Date: 22nd march 2026
+
+Goal:
+The goal of the sprint is to dveleop registration modules and Qr generation module
+This modules allow Admin to register staff,faculty and students and store data in the DB and genete QR for students
+
+Tasks to be completed:
+
+Student Registration
+Staff Registration
+QR generation
+
+Tasks completed:
+Student Registration
+Staff Registration
+
+Frontend development:
+
+Clean Frontend development for staff and student registration
+
+Backend development:
+
+Developed backend using Node.js and Express,
+Created student registration API,
+Connected backend with MySQL database,
+Implemented form validation,
+Implemented file upload using Multer.
+
+
+
+Deliveribles of this Sprint:
+
+Functional Student Registration Page,
+Backend API for student registration,
+MySQL students database table,
+File upload system for photos and signatures,
+Department-based dynamic course dropdown.
+
+Sprint Next Plan:
+
+Develope Mess modules
+Estimated time of span 1-2 weeks.
+
+Tech Stack used:
+
+Frontend: HTML, CSS, JavaScript,
+Backend: Node.js, Express.js,
+Database: MySQL,
+File Upload: Multer,
+QR : Json Web Tokens,
+Version Control: Git / GitHub
+
+Outcome of the sprint:
+
+The sprint successfully established student and staff registrtaion and studnet QR generation. 
+This modules are useful for further development 

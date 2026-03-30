@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartID Staff Login</title>
+  <link rel="stylesheet" href="/CSS/staff-login.css">
+</head>
+<body>
+
+  <div class="bg-circle"></div>
+  <div class="bg-circle"></div>
+  <div class="bg-circle"></div>
+
+  <div class="badge">SmartID Portal</div>
+
+  <div class="card">
+
+    <div class="card-header">
+      <div class="icon">
+        <!-- Briefcase / staff icon -->
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 6h-2.5V4.5A2.5 2.5 0 0 0 15 2h-6a2.5 2.5 0 0 0-2.5 2.5V6H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm-9.5-1.5A.5.5 0 0 1 11 4h2a.5.5 0 0 1 .5.5V6h-3V4.5zM11 15v-2H4v-1.5h7V10l3 2.5-3 2.5zm2 0l3-2.5-3-2.5v1.5h7V13h-7v2z"/>
+        </svg>
+      </div>
+      <h2>Staff Login</h2>
+      <p>SmartID Academic Portal</p>
+    </div>
+
+    <div class="card-body">
+
+      <div id="errorMsg" class="error-msg">
+        Invalid Staff ID or password. Please try again.
+      </div>
+
+      <form action="/staff/login" method="POST">
+
+        <input type="hidden" name="role" value="staff">
+
+        <div class="input-group">
+          <label>Staff ID</label>
+          <div class="input-wrap">
+            <svg viewBox="0 0 24 24">
+              <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 14H4V8h16v10zM6 9h3v3H6zm0 4h3v3H6zm4-4h8v1h-8zm0 2h8v1h-8zm0 2h5v1h-5z"/>
+            </svg>
+            <input type="text" name="username" placeholder="Enter your Staff ID" required>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Password</label>
+          <div class="input-wrap">
+            <svg viewBox="0 0 24 24">
+              <path d="M18 8h-1V6A5 5 0 0 0 7 6v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zm-6 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm3.1-9H8.9V6a3.1 3.1 0 0 1 6.2 0v2z"/>
+            </svg>
+            <input type="password" name="password" id="passwordInput" placeholder="Enter password" required>
+            <span class="eye-btn" onclick="togglePassword()">
+              <svg id="eyeIcon" viewBox="0 0 24 24">
+                <path d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5C21.3 7.6 17 4.5 12 4.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+
+        <div class="department-badge">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7v2h20V7L12 2zm-7 8v7H3v2h18v-2h-2v-7h-2v7h-2v-7h-2v7h-2v-7H9v7H7v-7H5z"/></svg>
+          University Staff Portal
+        </div>
+
+        <button type="submit" class="btn-login">
+          <span>Login</span>
+          <svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5v10z"/></svg>
+        </button>
+
+      </form>
+
+      <div class="divider"><span>or</span></div>
+
+     
+
+      <a href="/" class="back-link">← Back to Home</a>
+
+    </div>
+
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error") === "1") {
+      document.getElementById("errorMsg").style.display = "block";
+    }
+
+    function togglePassword() {
+      const input = document.getElementById("passwordInput");
+      const icon  = document.getElementById("eyeIcon");
+      if (input.type === "password") {
+        input.type = "text";
+        icon.querySelector("path").setAttribute("d",
+          "M17.9 5.1L6.1 16.9A9.9 9.9 0 0 1 2 12C3.7 7.6 7.6 4.5 12 4.5c2 0 3.9.6 5.5 1.6zm1.4 1.4A9.8 9.8 0 0 1 22 12c-1.7 4.4-6 7.5-11 7.5a9.9 9.9 0 0 1-5.5-1.6L17.9 6.5zM3.5 3.5l17 17-1.4 1.4-17-17 1.4-1.4z"
+        );
+      } else {
+        input.type = "password";
+        icon.querySelector("path").setAttribute("d",
+          "M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5C21.3 7.6 17 4.5 12 4.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"
+        );
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <script>
+  
+  // Prevent back button access and validate session on page load
+  fetch("/admin/me", { credentials: 'include' })
+    .then(res => {
+      if (!res.ok) {
+        // Clear any cached data
+        window.history.pushState(null, null, window.location.href);
+        window.addEventListener('popstate', function(event) {
+          window.history.pushState(null, null, window.location.href);
+        });
+        window.location.replace("/Admin/admin-login.html");
+      }
+    })
+    .catch(() => {
+      window.location.replace("/Admin/admin-login.html");
+    });
+
+  // Prevent back button access after logout
+  window.history.pushState(null, null, window.location.href);
+  window.addEventListener('popstate', function(event) {
+    fetch("/admin/me", { credentials: 'include' })
+      .then(res => {
+        if (!res.ok) {
+          window.history.pushState(null, null, window.location.href);
+          window.location.replace("/Admin/admin-login.html");
+        }
+      })
+      .catch(() => {
+        window.history.pushState(null, null, window.location.href);
+        window.location.replace("/Admin/admin-login.html");
+      });
+  });
+
+</script>
+
+  <meta charset="UTF-8">
+  <title>SmartID Admin Dashboard</title>
+  <link rel="stylesheet" href="/CSS/admin-dashboard.css">
+</head>
+<body>
+
+  
+  <div class="sidebar">
+
+    <!-- LOGO -->
+    <div class="sidebar-logo">
+      <div class="logo-icon">S</div>
+      <span>SmartID</span>
+    </div>
+
+    <!-- NAV -->
+    <nav class="sidebar-nav">
+
+      <a href="#" class="nav-item active" onclick="showSection('overview')">
+        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        <span>Overview</span>
+      </a>
+
+      <a href="#" class="nav-item" onclick="showSection('students')">
+        <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        <span>View Students</span>
+      </a>
+
+      <a href="#" class="nav-item" onclick="showSection('newstaff')">
+        <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        <span>Add Staff / Admin</span>
+      </a>
+
+    </nav>
+
+    <!-- ADMIN PROFILE (bottom left) -->
+    <div class="sidebar-profile" onclick="toggleProfileMenu()">
+      <div class="profile-avatar" id="profileAvatar">A</div>
+      <div class="profile-info">
+        <span class="profile-name"  id="profileName">Admin</span>
+        <span class="profile-role">Administrator</span>
+      </div>
+      <svg class="profile-arrow" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+    </div>
+
+    <!-- PROFILE POPUP MENU -->
+    <div class="profile-menu" id="profileMenu">
+      <div class="profile-menu-header">
+        <div class="profile-avatar-lg" id="profileAvatarLg">A</div>
+        <div>
+          <div class="profile-menu-name" id="profileMenuName">Admin</div>
+          <div class="profile-menu-role">Administrator</div>
+        </div>
+      </div>
+      <hr>
+      
+      <a href="#" class="profile-menu-item logout" onclick="handleLogout(event)">
+        <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+        Logout
+      </a>
+    </div>
+
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-title" id="topbarTitle">Overview</div>
+      <div class="topbar-right">
+        <span id="topbarDate"></span>
+      </div>
+    </div>
+
+    <!-- ── OVERVIEW SECTION ── -->
+    <div class="section" id="section-overview">
+
+      <div class="stats-grid">
+
+        <div class="stat-card">
+          <div class="stat-icon blue">
+            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="totalStudents">—</div>
+            <div class="stat-label">Total Students</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon green">
+            <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="thisYear">—</div>
+            <div class="stat-label">Admitted This Year</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon purple">
+            <svg viewBox="0 0 24 24"><path d="M20 6h-2.5V4.5A2.5 2.5 0 0 0 15 2h-6a2.5 2.5 0 0 0-2.5 2.5V6H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="totalStaff">—</div>
+            <div class="stat-label">Total Staff</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon red">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="pendingPassword">—</div>
+            <div class="stat-label">Pending Password Setup</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ── VIEW STUDENTS SECTION ── -->
+    <div class="section" id="section-students" style="display:none;">
+
+      <div class="section-header">
+        <input type="text" class="search-box" placeholder="Search by name, ID, department..." oninput="searchStudents(this.value)">
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Student ID</th>
+              <th>Name</th>
+              <th>Department</th>
+              <th>Course</th>
+              <th>Mobile</th>
+              <th>Admitted</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="studentTableBody">
+            <tr><td colspan="7" style="text-align:center; padding:30px; color:#999;">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- ── ADD STAFF / ADMIN SECTION ── -->
+    <div class="section" id="section-newstaff" style="display:none;">
+
+      <div class="form-card">
+
+        <h3>Add New Staff / Admin</h3>
+
+        <div id="formSuccess" class="form-success" style="display:none;"></div>
+        <div id="formError"   class="form-error"   style="display:none;"></div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="sf_name" placeholder="Enter full name">
+          </div>
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="sf_username" placeholder="Login username">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="sf_password" placeholder="Set password">
+          </div>
+          <div class="form-group">
+            <label>Role</label>
+            <select id="sf_role">
+              <option value="">Select Role</option>
+              <option value="staff">Staff</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Department</label>
+            <input type="text" id="sf_department" placeholder="e.g. School of Computer Science">
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="sf_email" placeholder="Official email">
+          </div>
+        </div>
+
+        <button class="btn-submit" onclick="addStaff()">Add Member</button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- STUDENT DETAILS MODAL -->
+  <div id="studentModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>Student Details</h2>
+      <div id="studentDetails"></div>
+    </div>
+  </div>
+
+  <script>
+
+    /* ── LOGOUT HANDLER ── */
+    function handleLogout(event) {
+      event.preventDefault();
+      // Clear sensitive data from memory
+      if (window.sessionStorage) {
+        window.sessionStorage.clear();
+      }
+      if (window.localStorage) {
+        // Only clear sensitive items if needed
+        const keysToRemove = [];
+        for (let i = 0; i < window.localStorage.length; i++) {
+          const key = window.localStorage.key(i);
+          if (key && (key.includes('admin') || key.includes('session') || key.includes('token'))) {
+            keysToRemove.push(key);
+          }
+        }
+        keysToRemove.forEach(key => window.localStorage.removeItem(key));
+      }
+      // Perform logout
+      window.location.href = "/admin/logout";
+    }
+
+    /* ── SET ADMIN NAME ── */
+    fetch("/admin/me")
+      .then(res => res.json())
+      .then(data => {
+        const name   = data.username || "Admin";
+        const avatar = name.charAt(0).toUpperCase();
+        document.getElementById("profileName").innerText     = name;
+        document.getElementById("profileAvatar").innerText   = avatar;
+        document.getElementById("profileAvatarLg").innerText = avatar;
+        document.getElementById("profileMenuName").innerText = name;
+      })
+      .catch(() => {});
+
+    /* ── DATE ── */
+    const now = new Date();
+    document.getElementById("topbarDate").innerText = now.toDateString();
+
+    /* ── SHOW SECTION ── */
+    function showSection(name) {
+
+      document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+      document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+
+      document.getElementById("section-" + name).style.display = "block";
+      event.currentTarget.classList.add("active");
+
+      const titles = { overview: "Overview", students: "View Students", newstaff: "Add Staff / Admin" };
+      document.getElementById("topbarTitle").innerText = titles[name];
+
+      if (name === "students") loadStudents();
+      if (name === "overview") loadStats();
+    }
+
+    /* ── LOAD STATS ── */
+    function loadStats() {
+      fetch("/admin/stats")
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("totalStudents").innerText   = data.totalStudents   ?? "—";
+          document.getElementById("thisYear").innerText        = data.thisYear        ?? "—";
+          document.getElementById("totalStaff").innerText      = data.totalStaff      ?? "—";
+          document.getElementById("pendingPassword").innerText = data.pendingPassword ?? "—";
+        })
+        .catch(() => {});
+    }
+
+    loadStats();
+
+    /* ── LOAD STUDENTS ── */
+    let allStudents = [];
+
+    function loadStudents() {
+      fetch("/admin/students")
+        .then(res => res.json())
+        .then(data => {
+          allStudents = data;
+          renderTable(data);
+        })
+        .catch(() => {
+          document.getElementById("studentTableBody").innerHTML =
+            `<tr><td colspan="6" style="text-align:center;color:red;">Failed to load students.</td></tr>`;
+        });
+    }
+
+    function renderTable(students) {
+      const tbody = document.getElementById("studentTableBody");
+      if (students.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:30px;color:#999;">No students found.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = students.map(s => `
+        <tr>
+          <td><span class="id-badge">${s.student_id}</span></td>
+          <td>${s.first_name} ${s.second_name}</td>
+          <td>${s.department}</td>
+          <td>${s.course}</td>
+          <td>${s.mobile_number}</td>
+          <td>${s.admission_year}</td>
+          <td><button class="btn-view" onclick="viewStudentDetails('${s.student_id}')">View Details</button></td>
+        </tr>
+      `).join("");
+    }
+
+    function searchStudents(query) {
+      const q = query.toLowerCase();
+      const filtered = allStudents.filter(s =>
+        s.student_id.toLowerCase().includes(q)   ||
+        s.first_name.toLowerCase().includes(q)   ||
+        s.second_name.toLowerCase().includes(q)  ||
+        s.department.toLowerCase().includes(q)
+      );
+      renderTable(filtered);
+    }
+
+    /* ── ADD STAFF ── */
+    function addStaff() {
+      const name       = document.getElementById("sf_name").value.trim();
+      const username   = document.getElementById("sf_username").value.trim();
+      const password   = document.getElementById("sf_password").value;
+      const role       = document.getElementById("sf_role").value;
+      const department = document.getElementById("sf_department").value.trim();
+      const email      = document.getElementById("sf_email").value.trim();
+
+      const successBox = document.getElementById("formSuccess");
+      const errorBox   = document.getElementById("formError");
+      successBox.style.display = "none";
+      errorBox.style.display   = "none";
+
+      if (!name || !username || !password || !role) {
+        errorBox.innerText       = "Name, username, password and role are required.";
+        errorBox.style.display   = "block";
+        return;
+      }
+
+      fetch("/admin/add-staff", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ name, username, password, role, department, email })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          successBox.innerText     = `${role.charAt(0).toUpperCase() + role.slice(1)} "${username}" added successfully!`;
+          successBox.style.display = "block";
+          document.getElementById("sf_name").value       = "";
+          document.getElementById("sf_username").value   = "";
+          document.getElementById("sf_password").value   = "";
+          document.getElementById("sf_role").value       = "";
+          document.getElementById("sf_department").value = "";
+          document.getElementById("sf_email").value      = "";
+        } else {
+          errorBox.innerText     = data.message || "Failed to add member.";
+          errorBox.style.display = "block";
+        }
+      })
+      .catch(() => {
+        errorBox.innerText     = "Network error. Please try again.";
+        errorBox.style.display = "block";
+      });
+    }
+
+    /* ── PROFILE MENU TOGGLE ── */
+    function toggleProfileMenu() {
+      const menu = document.getElementById("profileMenu");
+      menu.classList.toggle("show");
+    }
+
+    document.addEventListener("click", (e) => {
+      const profile = document.querySelector(".sidebar-profile");
+      const menu    = document.getElementById("profileMenu");
+      if (!profile.contains(e.target)) {
+        menu.classList.remove("show");
+      }
+    });
+
+    /* ── VIEW STUDENT DETAILS ── */
+    function viewStudentDetails(studentId) {
+      fetch(`/admin/student/${studentId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            alert('Student not found');
+            return;
+          }
+          displayStudentDetails(data);
+          document.getElementById('studentModal').style.display = 'block';
+        })
+        .catch(() => alert('Error loading student details'));
+    }
+
+    function displayStudentDetails(student) {
+      // Format date of birth to show only date, not time
+      const formatDate = (dateStr) => {
+        if (!dateStr) return 'N/A';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-IN', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+      };
+
+      const details = document.getElementById('studentDetails');
+      details.innerHTML = `
+        <div class="detail-row">
+          <strong>Student ID:</strong> ${student.student_id}
+        </div>
+        <div class="detail-row">
+          <strong>Name:</strong> ${student.first_name} ${student.second_name}
+        </div>
+        <div class="detail-row">
+          <strong>Father's Name:</strong> ${student.father_name}
+        </div>
+        <div class="detail-row">
+          <strong>Mother's Name:</strong> ${student.mother_name}
+        </div>
+        <div class="detail-row">
+          <strong>Gender:</strong> ${student.gender}
+        </div>
+        <div class="detail-row">
+          <strong>Date of Birth:</strong> ${formatDate(student.date_of_birth)}
+        </div>
+        <div class="detail-row">
+          <strong>Mobile:</strong> ${student.mobile_number}
+        </div>
+        <div class="detail-row">
+          <strong>Email:</strong> ${student.email}
+        </div>
+        <div class="detail-row">
+          <strong>Department:</strong> ${student.department}
+        </div>
+        <div class="detail-row">
+          <strong>Course:</strong> ${student.course}
+        </div>
+        <div class="detail-row">
+          <strong>Admission Year:</strong> ${student.admission_year}
+        </div>
+        <div class="detail-section">
+          <h3>Correspondence Address</h3>
+          <p>${student.correspondence_hno}, ${student.correspondence_street}, ${student.correspondence_city}, ${student.correspondence_district}, ${student.correspondence_state} - ${student.correspondence_pincode}</p>
+        </div>
+        <div class="detail-section">
+          <h3>Permanent Address</h3>
+          <p>${student.permanent_hno}, ${student.permanent_street}, ${student.permanent_city}, ${student.permanent_district}, ${student.permanent_state} - ${student.permanent_pincode}</p>
+        </div>
+        <div class="detail-section">
+          <h3>Photo</h3>
+          <img src="/uploads/students/${student.student_id}/photo.jpg" alt="Photo" style="max-width:200px;">
+        </div>
+        <div class="detail-section">
+          <h3>Signature</h3>
+          <img src="/uploads/students/${student.student_id}/signature.jpg" alt="Signature" style="max-width:200px;">
+        </div>
+      `;
+    }
+
+    function closeModal() {
+      document.getElementById('studentModal').style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById('studentModal');
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+  </script>
+
+</body>
+</html>

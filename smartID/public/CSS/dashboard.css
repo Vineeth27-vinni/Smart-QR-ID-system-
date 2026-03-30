@@ -1,0 +1,306 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(135deg,#7b1e2b, #9c2f3f);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* FLOATING BACKGROUND CIRCLES */
+
+.bg-circle {
+  position: fixed;
+  border-radius: 50%;
+  opacity: 0.08;
+  background: white;
+  animation: float 6s ease-in-out infinite;
+  z-index: 0;
+}
+
+.bg-circle:nth-child(1) { width: 350px; height: 350px; top: -100px; left: -100px; animation-delay: 0s; }
+.bg-circle:nth-child(2) { width: 250px; height: 250px; bottom: -80px; right: -80px; animation-delay: 2s; }
+.bg-circle:nth-child(3) { width: 180px; height: 180px; top: 40%; right: 8%; animation-delay: 4s; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-20px); }
+}
+
+/* BADGE */
+
+.badge {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  padding: 6px 20px;
+  border-radius: 20px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  position: relative;
+  z-index: 1;
+}
+
+/* CARD */
+
+.card {
+  background: white;
+  width: 400px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+/* CARD HEADER */
+
+.card-header {
+  background: linear-gradient(135deg, #7b1e2b, #7b1e2b);
+  padding: 32px 30px;
+  text-align: center;
+}
+
+.card-header .icon {
+  width: 68px;
+  height: 68px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+}
+
+.card-header .icon svg {
+  width: 34px;
+  height: 34px;
+  fill: white;
+}
+
+.card-header h2 {
+  color: white;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.card-header p {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+}
+
+/* CARD BODY */
+
+.card-body {
+  padding: 30px;
+}
+
+/* ERROR MESSAGE */
+
+.error-msg {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 18px;
+  display: none;
+}
+
+/* INPUT GROUP */
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 7px;
+}
+
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrap > svg {
+  position: absolute;
+  left: 13px;
+  width: 18px;
+  height: 18px;
+  fill: #aaa;
+  transition: fill 0.3s;
+  pointer-events: none;
+}
+
+.input-wrap input {
+  width: 100%;
+  padding: 12px 42px 12px 42px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-wrap input:focus {
+  border-color: #7b1e2b;
+  box-shadow: 0 0 0 4px rgba(26, 35, 126, 0.1);
+}
+
+.input-wrap input:focus ~ svg {
+  fill: #7b1e2b;
+}
+
+/* EYE BUTTON */
+
+.eye-btn {
+  position: absolute;
+  right: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.eye-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: #aaa;
+  transition: fill 0.3s;
+}
+
+.eye-btn:hover svg {
+  fill: #7b1e2b;
+}
+
+/* LOGIN BUTTON */
+
+.btn-login {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, #7b1e2b, #7b1e2b);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: 5px;
+}
+
+.btn-login svg {
+  width: 20px;
+  height: 20px;
+  fill: white;
+}
+
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(26, 35, 126, 0.4);
+}
+
+.btn-login:active {
+  transform: translateY(0px);
+}
+
+/* DIVIDER */
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 22px 0;
+  color: #bbb;
+  font-size: 13px;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e5e5e5;
+}
+
+/* NEW LOGIN BUTTON */
+
+.btn-new-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  background: white;
+  color: #7b1e2b;
+  border: 2px solid #7b1e2b;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s, transform 0.2s;
+  margin-bottom: 10px;
+}
+
+.btn-new-login svg {
+  width: 18px;
+  height: 18px;
+  fill: #7b1e2b;
+  transition: fill 0.3s;
+}
+
+.btn-new-login:hover {
+  background: #7b1e2b;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.btn-new-login:hover svg {
+  fill: white;
+}
+
+/* BACK LINK */
+
+.back-link {
+  display: block;
+  text-align: center;
+  margin-top: 18px;
+  font-size: 13px;
+  color: #999;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.back-link:hover {
+  color: #7b1e2b;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 440px) {
+  .card {
+    width: 92%;
+  }
+}

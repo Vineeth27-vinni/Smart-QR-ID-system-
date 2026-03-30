@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartID Portal</title>
+
+<link rel="stylesheet" href="/CSS/home.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>BEST ENGINEERING COLLEGE</h1>
+
+
+<h2>SmartID System</h2>
+<p>Select Your Login Role</p>
+
+<div class="card-container">
+
+<!-- STUDENT -->
+
+<div class="card" onclick="goTo('student')">
+<h2>Student</h2>
+<p>Access your ID, library, and mess services</p>
+</div>
+
+<!-- STAFF -->
+
+<div class="card" onclick="goTo('staff')">
+<h2>Staff</h2>
+<p>Manage academic and verification activities</p>
+</div>
+
+<!-- ADMIN -->
+
+<div class="card" onclick="goTo('admin')">
+<h2>Admin</h2>
+<p>Full system control and management</p>
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+function goTo(role){
+
+if(role === "student"){
+window.location.href = "/Registration/Dashboard.html";
+}
+
+else if(role === "staff"){
+window.location.href = "/Staff/staff-login.html";
+}
+
+else if(role === "admin"){
+window.location.href = "/Admin/admin-login.html";
+}
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,192 @@
+
+
+body{
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg,#e4e7e6,#ebe8e8);
+    margin:0;
+    padding:0;
+}
+
+/* MAIN FORM CONTAINER */
+
+.container{
+
+    width:900px;
+    margin:40px auto;
+    background:white;
+    padding:40px;
+    border-radius:10px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.2);
+
+}
+
+
+
+h2{
+
+    text-align:center;
+    margin-bottom:30px;
+    color:#7b1e2b;
+    font-weight:600;
+
+}
+
+/* GRID ROW */
+
+.row{
+
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:45px;
+    margin-bottom:10px;
+
+}
+
+/* LABEL */
+
+label{
+
+    font-weight:600;
+    display:block;
+    margin-bottom:5px;
+    color:#333;
+
+}
+
+/* INPUTS */
+
+input,
+select{
+
+    width:100%;
+    padding:10px;
+    border-radius:6px;
+    border:1px solid #ccc;
+    font-size:14px;
+    margin-bottom:15px;
+
+}
+
+/* INPUT FOCUS */
+
+input:focus,
+select:focus{
+
+    outline:none;
+    border-color:#7b1e2b;
+    box-shadow:0 0 5px rgba(123,30,43,0.3);
+
+}
+
+/* ADDRESS BOXES */
+
+.address-box{
+
+    border:2px solid #ddd;
+    border-radius:8px;
+    padding:20px;
+    margin-top:20px;
+    margin-bottom:25px;
+    background:#fafafa;
+
+}
+
+/* ADDRESS TITLE */
+
+.address-box h3{
+
+    margin-top:0;
+    margin-bottom:15px;
+    color:#7b1e2b;
+
+}
+
+/* FILE INPUTS */
+
+input[type="file"]{
+
+    border:none;
+
+}
+
+/* SUBMIT BUTTON */
+
+button{
+
+    width:100%;
+    padding:14px;
+    background:#2e7d32;   /* green */
+    color:white;
+    border:none;
+    border-radius:6px;
+    font-size:16px;
+    cursor:pointer;
+    margin-top:10px;
+
+}
+
+/* BUTTON HOVER */
+
+button:hover{
+
+    background:#1b5e20;
+
+}
+@media (max-width: 1000px) {
+  .container {
+    width: 92%;
+    padding: 30px 24px;
+  }
+}
+
+@media (max-width: 750px) {
+  .container {
+    width: 95%;
+    padding: 20px 16px;
+    margin: 20px auto;
+  }
+  .row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .address-box {
+    padding: 14px;
+  }
+  h2 {
+    font-size: 20px;
+  }
+  button {
+    font-size: 15px;
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    width: 100%;
+    border-radius: 0;
+    margin: 0;
+    padding: 16px 12px;
+  }
+  input,
+  select {
+    font-size: 16px; /* prevents iOS zoom on focus */
+  }
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.checkbox-group label {
+    display: inline;
+    margin: 0;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}

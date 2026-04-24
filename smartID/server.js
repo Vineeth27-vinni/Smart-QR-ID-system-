@@ -1,5 +1,5 @@
 const express = require("express");
-const path    = require("path");
+const path = require("path");
 const session = require("express-session");
 require("dotenv").config();
 
@@ -7,7 +7,7 @@ const app = express();
 
 /* ROUTES */
 const studentRoutes = require("./routes/studentRoutes");
-const adminRoutes   = require("./routes/adminRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 
 /* MIDDLEWARE */
@@ -16,10 +16,10 @@ app.use(express.urlencoded({ extended: true }));
 
 /* SESSION */
 app.use(session({
-  secret:            process.env.SESSION_SECRET || "smartid_secret_key",
-  resave:            false,
+  secret: process.env.SESSION_SECRET,
+  resave: false,
   saveUninitialized: false,
-  cookie: { 
+  cookie: {
     maxAge: 1000 * 60 * 60,
     httpOnly: true,  // Prevents JavaScript access to session cookie
     secure: false,   // Set to true if using HTTPS
@@ -40,8 +40,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 /* MOUNT ROUTES */
-app.use("/students", studentRoutes);
-app.use("/admin",    adminRoutes);
+app.use("/student", studentRoutes);
+app.use("/admin", adminRoutes);
 
 
 /* HOME */

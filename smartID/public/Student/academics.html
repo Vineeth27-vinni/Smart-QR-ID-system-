@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Academics | SmartID</title>
+  <link rel="stylesheet" href="/CSS/academics.css">
+</head>
+
+<body>
+
+  <!-- ══ TOPBAR ══ -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <a href="/student/dashboard" class="back-btn">
+        <svg viewBox="0 0 24 24">
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+        </svg>
+        Dashboard
+      </a>
+      <div class="topbar-divider"></div>
+      <div>
+        <div class="topbar-title">Academics</div>
+        <div class="topbar-subtitle" id="topbarStudent">Loading...</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="semester-chip" id="semChip">Semester —</span>
+    </div>
+  </header>
+
+  <!-- ══ HERO ══ -->
+  <section class="hero">
+    <div class="hero-blob hero-blob-1"></div>
+    <div class="hero-blob hero-blob-2"></div>
+    <p class="hero-label">Academic Overview</p>
+    <h1 class="hero-title">Your Academic Record</h1>
+    <div class="hero-stats-row">
+      <div class="hero-stat">
+        <span class="hero-stat-value" id="heroAttendance">82%</span>
+        <span class="hero-stat-label">Attendance</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-value">8.4</span>
+        <span class="hero-stat-label">Current CGPA</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-value">5</span>
+        <span class="hero-stat-label">Courses</span>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <span class="hero-stat-value">22</span>
+        <span class="hero-stat-label">Credits</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ MAIN ══ -->
+  <main class="main">
+
+    <!-- Tabs -->
+    <div class="tabs-bar" role="tablist">
+      <button class="tab-btn active" onclick="switchTab('attendance', this)" role="tab">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" />
+        </svg>
+        <span>Attendance</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('courses', this)" role="tab">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z" />
+        </svg>
+        <span>Courses</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('timetable', this)" role="tab">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z" />
+        </svg>
+        <span>Timetable</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('results', this)" role="tab">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z" />
+        </svg>
+        <span>Results</span>
+      </button>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         TAB 1: ATTENDANCE
+    ══════════════════════════════════════ -->
+    <div class="tab-panel active" id="tab-attendance">
+
+      <div class="attendance-grid">
+
+        <!-- Overall card -->
+        <div class="attendance-overview">
+          <div class="ring-wrap">
+            <svg class="ring-svg" viewBox="0 0 120 120">
+              <circle class="ring-bg" cx="60" cy="60" r="54" />
+              <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="54" />
+            </svg>
+            <div class="ring-label">
+              <span class="ring-pct" id="ringPct">82%</span>
+              <span class="ring-sub">Overall</span>
+            </div>
+          </div>
+
+          <div class="attendance-meta">
+            <h3>Attendance Summary</h3>
+            <p>You need to maintain at least <strong>75%</strong> attendance in each subject to be eligible for
+              examinations.</p>
+            <div class="att-stats" id="attendanceStats">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Requirement card -->
+        <div class="att-req-card" id="subjectProgressList">
+          <h4>Subject-wise Status</h4>
+          <!-- Dynamically populated -->
+        </div>
+
+      </div>
+
+      <!-- Subject-wise table -->
+      <div class="subject-table-card">
+        <div class="table-head">
+          <h4>Detailed Subject Attendance</h4>
+          <div class="legend">
+            <span><span class="legend-dot" style="background:var(--green)"></span> ≥ 85% Good</span>
+            <span><span class="legend-dot" style="background:#f59e0b"></span> 75–84% Borderline</span>
+            <span><span class="legend-dot" style="background:var(--red)"></span> &lt; 75% Shortage</span>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Code</th>
+              <th>Attended</th>
+              <th>Total</th>
+              <th>%</th>
+              <th>Progress</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         TAB 2: COURSES
+    ══════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-courses">
+      <div class="courses-filter-row">
+        <button class="filter-chip active" onclick="filterCourses('all', this)">All Courses</button>
+        <button class="filter-chip" onclick="filterCourses('theory', this)">Theory</button>
+        <button class="filter-chip" onclick="filterCourses('lab', this)">Lab</button>
+        <button class="filter-chip" onclick="filterCourses('elective', this)">Elective</button>
+      </div>
+
+      <div class="courses-grid" id="coursesList">
+        <!-- Dynamically populated -->
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         TAB 3: TIMETABLE
+    ══════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-timetable">
+      <div class="timetable-card">
+        <div class="timetable-header">
+          <h4>Weekly Timetable — Semester II</h4>
+          <span class="today-badge" id="todayBadge">Monday</span>
+        </div>
+        <div class="timetable-scroll">
+          <table class="timetable-table">
+            <thead>
+              <tr>
+                <th class="time-col">Time</th>
+                <th id="th-mon">Monday</th>
+                <th id="th-tue">Tuesday</th>
+                <th id="th-wed">Wednesday</th>
+                <th id="th-thu">Thursday</th>
+                <th id="th-fri">Friday</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="time-cell">9:00 – 10:00</td>
+                <td>
+                  <div class="slot blue">
+                    <div class="slot-name">Adv. Algorithms</div>
+                    <div class="slot-room">LH-201</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="slot teal">
+                    <div class="slot-name">Machine Learning</div>
+                    <div class="slot-room">LH-102</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="slot blue">
+                    <div class="slot-name">Adv. Algorithms</div>
+                    <div class="slot-room">LH-201</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="slot violet">
+                    <div class="slot-name">Database Systems</div>
+                    <div class="slot-room">Lab-B3</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="slot blue">
+                    <div class="slot-name">Adv. Algorithms</div>
+                    <div class="slot-room">LH-201</div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="time-cell">10:00 – 11:00</td>
+                <td>
+                  <div class="slot violet">
+                    <div class="slot-name">Database Systems</div>
+                    <div class="slot-room">Lab-B3</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="slot rose">
+                    <div class="slot-name">Cloud Computing</div>
+                    <div class="slot-room">LH-305</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="slot amber">
+                    <div class="slot-name">Research Methods</div>
+                    <div class="slot-room">SB-101</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="slot teal">
+                    <div class="slot-name">Machine Learning</div>
+                    <div class="slot-room">LH-102</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="slot rose">
+                    <div class="slot-name">Cloud Computing</div>
+                    <div class="slot-room">LH-305</div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="time-cell">11:00 – 11:15</td>
+                <td colspan="5">
+                  <div class="slot break">SHORT BREAK</div>
+                </td>
+              </tr>
+              <tr>
+                <td class="time-cell">11:15 – 12:15</td>
+                <td>
+                  <div class="slot empty"></div>
+                </td>
+                <td>
+                  <div class="slot teal">
+                    <div class="slot-name">Machine Learning</div>
+                    <div class="slot-room">LH-102</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="slot violet">
+                    <div class="slot-name">Database Systems</div>
+                    <div class="slot-room">Lab-B3</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="slot empty"></div>
+                </td>
+                <td>
+                  <div class="slot amber">
+                    <div class="slot-name">Research Methods</div>
+                    <div class="slot-room">SB-101</div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="time-cell">12:15 – 1:15</td>
+                <td colspan="5">
+                  <div class="slot break">LUNCH BREAK</div>
+                </td>
+              </tr>
+              <tr>
+                <td class="time-cell">1:15 – 2:15</td>
+                <td>
+                  <div class="slot teal">
+                    <div class="slot-name">Machine Learning</div>
+                    <div class="slot-room">LH-102</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="slot empty"></div>
+                </td>
+                <td>
+                  <div class="slot blue">
+                    <div class="slot-name">Adv. Algorithms</div>
+                    <div class="slot-room">LH-201</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="slot violet">
+                    <div class="slot-name">Database Systems</div>
+                    <div class="slot-room">Lab-B3</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="slot empty"></div>
+                </td>
+              </tr>
+              <tr>
+                <td class="time-cell">2:15 – 3:15</td>
+                <td>
+                  <div class="slot amber">
+                    <div class="slot-name">Research Methods</div>
+                    <div class="slot-room">SB-101</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="slot rose">
+                    <div class="slot-name">Cloud Computing</div>
+                    <div class="slot-room">LH-305</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="slot empty"></div>
+                </td>
+                <td>
+                  <div class="slot rose">
+                    <div class="slot-name">Cloud Computing</div>
+                    <div class="slot-room">LH-305</div>
+                  </div>
+                </td>
+                <td>
+                  <div class="slot violet">
+                    <div class="slot-name">Database Systems</div>
+                    <div class="slot-room">Lab-B3</div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         TAB 4: RESULTS
+    ══════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-results">
+
+      <div class="results-overview" id="resultsOverview">
+        <!-- Dynamically populated -->
+      </div>
+
+      <div class="results-table-card">
+        <div class="table-head">
+          <h4>Semester I Results</h4>
+          <span class="semester-chip">Declared • Nov 2025</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Code</th>
+              <th>Credits</th>
+              <th>Internal (40)</th>
+              <th>External (60)</th>
+              <th>Total (100)</th>
+              <th>Grade</th>
+              <th>Grade Point</th>
+            </tr>
+          </thead>
+          <tbody id="resultsTableBody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="page-footer"></div>
+  </main>
+
+  <script>
+    /* ── LOAD ACADEMIC DATA ── */
+    async function loadAcademicData() {
+      try {
+        const [meRes, acadRes] = await Promise.all([
+          fetch('/student/me', { credentials: 'include' }),
+          fetch('/student/academics/data', { credentials: 'include' })
+        ]);
+
+        if (!meRes.ok || !acadRes.ok) throw new Error();
+
+        const { student } = await meRes.json();
+        const data = await acadRes.json();
+
+        renderTopbar(student, data);
+        renderAttendance(data);
+        renderCourses(data);
+        renderResults(data);
+      } catch (err) {
+        console.error("Failed to load academics:", err);
+        // window.location.replace('/student/login');
+      }
+    }
+
+    function renderTopbar(s, data) {
+      document.getElementById('topbarStudent').textContent = `${s.first_name} ${s.second_name} · ${s.student_id}`;
+      const currentSem = data.semesters[0]?.semester_number || '—';
+      document.getElementById('semChip').textContent = `Semester ${romanize(currentSem)}`;
+    }
+
+    function renderAttendance(data) {
+      const enroll = data.enrollment;
+      if (!enroll || enroll.length === 0) return;
+
+      let totalAttended = 0;
+      let totalClasses = 0;
+
+      const progressList = document.getElementById('subjectProgressList');
+      progressList.innerHTML = '<h4>Subject-wise Status</h4>';
+
+      const tableBody = document.querySelector('.subject-table-card tbody');
+      tableBody.innerHTML = '';
+
+      enroll.forEach(e => {
+        const attended = e.classes_attended || 0;
+        const total = e.total_classes || 0;
+        const pct = total > 0 ? Math.round((attended / total) * 100) : 0;
+        
+        totalAttended += attended;
+        totalClasses += total;
+
+        const statusClass = pct >= 85 ? 'good' : (pct >= 75 ? 'warn' : 'danger');
+        const statusText = pct >= 85 ? '✓ Good' : (pct >= 75 ? '⚠ Borderline' : '✗ Shortage');
+
+        // Progress Card Item
+        progressList.innerHTML += `
+          <div class="req-item">
+            <div class="req-item-top">
+              <span class="req-name">${e.course_name}</span>
+              <span class="req-pct" style="color:var(--${statusClass === 'warn' ? 'orange' : (statusClass === 'good' ? 'green' : 'red')})">${pct}%</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar ${statusClass}" style="width:${pct}%"></div>
+            </div>
+            <div class="req-note">${attended}/${total} classes attended</div>
+          </div>
+        `;
+
+        // Table Row
+        tableBody.innerHTML += `
+          <tr>
+            <td>
+              <div class="subject-name">${e.course_name}</div>
+              <div class="subject-code">${e.course_type} • ${e.credits} Credits</div>
+            </td>
+            <td>${e.course_code}</td>
+            <td>${attended}</td>
+            <td>${total}</td>
+            <td><strong>${pct}%</strong></td>
+            <td>
+              <div class="inline-bar-wrap">
+                <div class="inline-bar ${statusClass}" style="width:${pct}%"></div>
+              </div>
+            </td>
+            <td><span class="att-pill ${statusClass}">${statusText}</span></td>
+          </tr>
+        `;
+      });
+
+      const overallPct = totalClasses > 0 ? Math.round((totalAttended / totalClasses) * 100) : 0;
+      document.getElementById('heroAttendance').textContent = `${overallPct}%`;
+      document.getElementById('ringPct').textContent = `${overallPct}%`;
+      animateRing(overallPct);
+
+      document.getElementById('attendanceStats').innerHTML = `
+        <div class="att-stat-box">
+          <div class="att-stat-num green">${totalAttended}</div>
+          <div class="att-stat-desc">Classes Attended</div>
+        </div>
+        <div class="att-stat-box">
+          <div class="att-stat-num red">${totalClasses - totalAttended}</div>
+          <div class="att-stat-desc">Classes Missed</div>
+        </div>
+        <div class="att-stat-box">
+          <div class="att-stat-num orange">${totalClasses}</div>
+          <div class="att-stat-desc">Total Classes</div>
+        </div>
+      `;
+    }
+
+    function renderCourses(data) {
+      const list = document.getElementById('coursesList');
+      list.innerHTML = '';
+      
+      data.enrollment.forEach(e => {
+        const initials = e.instructor_name.split(' ').map(n => n[0]).join('');
+        const colorClass = ['blue', 'teal', 'violet', 'rose', 'amber'][Math.floor(Math.random() * 5)];
+        const pct = e.total_classes > 0 ? Math.round((e.classes_attended / e.total_classes) * 100) : 0;
+
+        list.innerHTML += `
+          <div class="course-card" data-type="${e.course_type.toLowerCase()}">
+            <div class="course-card-top">
+              <div class="course-icon ${colorClass}">${e.course_name.substring(0, 2).toUpperCase()}</div>
+              <div class="course-info">
+                <div class="course-name">${e.course_name}</div>
+                <div class="course-code">${e.course_code}</div>
+              </div>
+              <span class="course-tag ${e.course_type.toLowerCase()}">${e.course_type}</span>
+            </div>
+            <div class="course-card-body">
+              <div class="course-stat">
+                <span class="course-stat-label">Credits</span>
+                <span class="course-stat-value">${e.credits}</span>
+              </div>
+              <div class="course-stat">
+                <span class="course-stat-label">Attendance</span>
+                <span class="course-stat-value" style="color:var(--${pct >= 75 ? 'green' : 'red'})">${pct}%</span>
+              </div>
+              <div class="course-stat">
+                <span class="course-stat-label">Schedule</span>
+                <span class="course-stat-value">${e.schedule}</span>
+              </div>
+              <div class="course-stat">
+                <span class="course-stat-label">Room</span>
+                <span class="course-stat-value">${e.room_number}</span>
+              </div>
+              <div class="course-faculty">
+                <div class="faculty-avatar">${initials}</div>
+                <span class="faculty-name">${e.instructor_name}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderResults(data) {
+      const sem = data.semesters.find(s => s.semester_number === 1) || data.semesters[0];
+      if (!sem) return;
+
+      const overview = document.getElementById('resultsOverview');
+      overview.innerHTML = `
+        <div class="result-stat-card">
+          <span class="rs-label">SGPA</span>
+          <span class="rs-value navy">${sem.sgpa || '—'}</span>
+          <span class="rs-sub">Semester ${romanize(sem.semester_number)}</span>
+        </div>
+        <div class="result-stat-card">
+          <span class="rs-label">CGPA</span>
+          <span class="rs-value navy">${sem.cgpa || '—'}</span>
+          <span class="rs-sub">Overall</span>
+        </div>
+        <div class="result-stat-card">
+          <span class="rs-label">Credits Earned</span>
+          <span class="rs-value green">${sem.credits_earned}</span>
+          <span class="rs-sub">out of ${sem.total_credits}</span>
+        </div>
+        <div class="result-stat-card">
+          <span class="rs-label">Rank</span>
+          <span class="rs-value gold">${sem.rank_in_class || '—'}</span>
+          <span class="rs-sub">In class</span>
+        </div>
+      `;
+
+      const tableBody = document.getElementById('resultsTableBody');
+      tableBody.innerHTML = '';
+      
+      data.results.forEach(r => {
+        tableBody.innerHTML += `
+          <tr>
+            <td>
+              <div class="subject-name">${r.course_name}</div>
+              <div class="subject-code">Theory</div>
+            </td>
+            <td>${r.course_code}</td>
+            <td>${r.credits}</td>
+            <td>
+              <div class="marks-wrap">
+                <div class="marks-text">${r.internal_marks}</div>
+                <div class="marks-out">out of 40</div>
+              </div>
+            </td>
+            <td>
+              <div class="marks-wrap">
+                <div class="marks-text">${r.external_marks}</div>
+                <div class="marks-out">out of 60</div>
+              </div>
+            </td>
+            <td><strong>${r.internal_marks + r.external_marks}</strong></td>
+            <td><span class="grade-badge ${r.grade[0]}">${r.grade}</span></td>
+            <td><strong>${r.grade_point}</strong></td>
+          </tr>
+        `;
+      });
+    }
+
+    function romanize(num) {
+      if (!+num) return false;
+      var digits = String(+num).split(""),
+        key = ["", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM",
+          "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC",
+          "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"],
+        roman = "",
+        i = 3;
+      while (i--)
+        roman = (key[+digits.pop() + (i * 10)] || "") + roman;
+      return Array(+digits.join("") + 1).join("M") + roman;
+    }
+
+    /* ── ATTENDANCE RING ── */
+    function animateRing(pct) {
+      const circumference = 2 * Math.PI * 54;
+      const fill = document.getElementById('ringFill');
+      const offset = circumference - (pct / 100) * circumference;
+      fill.style.strokeDasharray = circumference;
+      fill.style.strokeDashoffset = offset;
+      if (pct < 75) fill.classList.add('danger');
+      else fill.classList.remove('danger');
+    }
+
+    /* ── TABS ── */
+    function switchTab(id, btn) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + id).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    /* ── COURSE FILTER ── */
+    function filterCourses(type, chip) {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      document.querySelectorAll('.course-card').forEach(card => {
+        if (type === 'all' || card.dataset.type === type) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    /* ── HIGHLIGHT TODAY ── */
+    function highlightToday() {
+      const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+      const todayIdx = new Date().getDay();
+      const today = days[todayIdx];
+      const dayNames = { mon: 'Monday', tue: 'Tuesday', wed: 'Wednesday', thu: 'Thursday', fri: 'Friday' };
+      
+      if (dayNames[today]) {
+        document.getElementById('todayBadge').textContent = dayNames[today] + ' (Today)';
+        // Highlight header
+        const th = document.getElementById('th-' + today);
+        if (th) th.style.color = 'var(--accent)';
+      }
+    }
+
+    /* ── INIT ── */
+    window.onload = () => {
+      loadAcademicData();
+      highlightToday();
+    };
+  </script>
+
+</body>
+
+</html>

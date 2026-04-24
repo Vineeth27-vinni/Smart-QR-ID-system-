@@ -1,442 +1,335 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Student Registration</title>
-
-<link rel="stylesheet" href="/CSS/student-reg.css">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Registration | SmartID</title>
+  <link rel="stylesheet" href="/CSS/student-reg.css">
 </head>
 
 <body>
 
-<div class="container">
-
-<h2>Student Registration</h2>
-
-<form action="/students/register" method="POST" enctype="multipart/form-data">
-
-<!-- NAME -->
-
-<div class="row">
-
-<div>
-<label>First Name</label>
-<input type="text" name="first_name" maxlength="30" required>
-</div>
-
-<div>
-<label>Last Name</label>
-<input type="text" name="second_name" maxlength="30" required>
-</div>
-
-</div>
-
-
-<!-- PARENTS -->
-
-<div class="row">
-
-<div>
-<label>Father Name</label>
-<input type="text" name="father_name" maxlength="50" required>
-</div>
-
-<div>
-<label>Mother Name</label>
-<input type="text" name="mother_name" maxlength="50" required>
-</div>
-
-</div>
-
-
-<!-- GENDER + DOB -->
-
-<div class="row">
-
-<div>
-<label>Gender</label>
-
-<select name="gender" required>
-
-<option value="">Select Gender</option>
-<option>Male</option>
-<option>Female</option>
-<option>Other</option>
-
-</select>
-
-</div>
-
-<div>
-<label>Date of Birth</label>
-<input type="date" name="date_of_birth">
-</div>
-
-</div>
-
-
-<!-- CONTACT -->
-
-<div class="row">
-
-<div>
-<label>Mobile Number</label>
-
-<input
-type="tel"
-name="mobile_number"
-maxlength="10"
-pattern="[6-9]{1}[0-9]{9}"
-placeholder="10 digit mobile number"
-required>
-
-</div>
-
-<div>
-<label>Email</label>
-
-<input
-type="email"
-name="email"
-maxlength="60"
-placeholder="Email Address">
-
-</div>
-
-</div>
-
-
-<!-- DEPARTMENT -->
-
-<label>Department</label>
-
-<select id="department" name="department" onchange="updateCourses()" required>
-
-<option value="">Select Department</option>
-
-<option value="School of Computer and Information Science">
-School of Computer and Information Science
-</option>
-
-<option value="School of Physics">School of Physics</option>
-
-<option value="School of Chemistry">School of Chemistry</option>
-
-<option value="School of Mathematics">School of Mathematics</option>
-
-<option value="School of Life Sciences">School of Life Sciences</option>
-
-<option value="School of Management">School of Management</option>
-
-<option value="School of Humanities">School of Humanities</option>
-
-<option value="School of Social Sciences">School of Social Sciences</option>
-
-<option value="School of Earth Sciences">School of Earth Sciences</option>
-
-<option value="School of Arts">School of Arts</option>
-
-</select>
-
-
-<!-- COURSE -->
-
-<label>Course</label>
-
-<select id="course" name="course" required>
-
-<option value="">Select Course</option>
-
-</select>
-
-
-<!-- FILE UPLOAD -->
-
-<div class="row">
-
-<div>
-<label>Upload Photo</label>
-<input type="file" name="photo" accept="image/*" required>
-</div>
-
-<div>
-<label>Upload Signature</label>
-<input type="file" name="signature" accept="image/*" required>
-</div>
-
-</div>
-
-
-<!-- CORRESPONDENCE ADDRESS -->
-
-<div class="address-box">
-
-<h3>Correspondence Address</h3>
-
-<div class="row">
-
-<div>
-<label>House No</label>
-<input type="text" id="correspondence_hno" name="correspondence_hno">
-</div>
-
-<div>
-<label>Street</label>
-<input type="text" id="correspondence_street" name="correspondence_street">
-</div>
-
-</div>
-
-<div class="row">
-
-<div>
-<label>City</label>
-<input type="text" id="correspondence_city" name="correspondence_city">
-</div>
-
-<div>
-<label>District</label>
-<input type="text" id="correspondence_district" name="correspondence_district">
-</div>
-
-</div>
-
-<div class="row">
-
-<div>
-<label>State</label>
-
-<select id="correspondence_state" name="correspondence_state">
-
-<option value="">Select State</option>
-<option>Andhra Pradesh</option>
-<option>Telangana</option>
-<option>Tamil Nadu</option>
-<option>Karnataka</option>
-<option>Kerala</option>
-
-</select>
-
-</div>
-
-<div>
-<label>Pincode</label>
-
-<input
-type="text"
-id="correspondence_pincode"
-name="correspondence_pincode"
-maxlength="6">
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- CHECKBOX -->
-
-<div class="checkbox-group">
-
-<input type="checkbox" id="sameAddress" onclick="copyAddress()">
-<label for="sameAddress">
-Permanent Address same as Correspondence Address
-</label>
-
-</div>
-
-
-<!-- PERMANENT ADDRESS -->
-
-<div class="address-box">
-
-<h3>Permanent Address</h3>
-
-<div class="row">
-
-<div>
-<label>House No</label>
-<input type="text" id="permanent_hno" name="permanent_hno">
-</div>
-
-<div>
-<label>Street</label>
-<input type="text" id="permanent_street" name="permanent_street">
-</div>
-
-</div>
-
-<div class="row">
-
-<div>
-<label>City</label>
-<input type="text" id="permanent_city" name="permanent_city">
-</div>
-
-<div>
-<label>District</label>
-<input type="text" id="permanent_district" name="permanent_district">
-</div>
-
-</div>
-
-<div class="row">
-
-<div>
-<label>State</label>
-
-<select id="permanent_state" name="permanent_state">
-
-<option value="">Select State</option>
-<option>Andhra Pradesh</option>
-<option>Telangana</option>
-<option>Tamil Nadu</option>
-<option>Karnataka</option>
-<option>Kerala</option>
-
-</select>
-
-</div>
-
-<div>
-<label>Pincode</label>
-
-<input
-type="text"
-id="permanent_pincode"
-name="permanent_pincode"
-maxlength="6">
-
-</div>
-
-</div>
-
-</div>
-
-
-<button type="submit">Register Student</button>
-
-</form>
-
-</div>
-
-
-<script>
-
-/* Department → Course */
-
-const coursesByDepartment = {
-
-"School of Computer and Information Science":[
-"I.Mtech CSE",
-"M.Tech Computer Science-AI",
-"M.Tech Computer Science-Data Science",
-"M.Tech Computer Science",
-"PHD Computer Science"
-],
-
-"School of Physics":[
-"B.Sc Physics",
-"M.Sc Physics",
-"PHD Physics"
-],
-
-"School of Chemistry":[
-"B.Sc Chemistry",
-"M.Sc Chemistry",
-"PHD Chemistry"
-],
-
-"School of Mathematics":[
-"B.Sc Mathematics",
-"M.Sc Mathematics",
-"PHD Mathematics"
-],
-
-"School of Life Sciences":[
-"B.Sc Life Sciences",
-"M.Sc Life Sciences",
-"PHD Life Sciences"
-],
-
-
-
-"School of Management":[
-"MBA"
-]
-
-};
-
-
-function updateCourses(){
-
-const dept = document.getElementById("department").value;
-const courseDropdown = document.getElementById("course");
-
-courseDropdown.innerHTML = '<option value="">Select Course</option>';
-
-if(coursesByDepartment[dept]){
-
-coursesByDepartment[dept].forEach(course=>{
-
-const option=document.createElement("option");
-
-option.value=course;
-option.text=course;
-
-courseDropdown.appendChild(option);
-
-});
-
-}
-
-}
-
-
-/* Address Copy */
-
-function copyAddress(){
-
-const checked=document.getElementById("sameAddress").checked;
-
-if(checked){
-
-document.getElementById("permanent_hno").value=
-document.getElementById("correspondence_hno").value;
-
-document.getElementById("permanent_street").value=
-document.getElementById("correspondence_street").value;
-
-document.getElementById("permanent_city").value=
-document.getElementById("correspondence_city").value;
-
-document.getElementById("permanent_district").value=
-document.getElementById("correspondence_district").value;
-
-document.getElementById("permanent_state").value=
-document.getElementById("correspondence_state").value;
-
-document.getElementById("permanent_pincode").value=
-document.getElementById("correspondence_pincode").value;
-
-}else{
-
-document.getElementById("permanent_hno").value="";
-document.getElementById("permanent_street").value="";
-document.getElementById("permanent_city").value="";
-document.getElementById("permanent_district").value="";
-document.getElementById("permanent_state").value="";
-document.getElementById("permanent_pincode").value="";
-
-}
-
-}
-
-</script>
+  <div class="container">
+
+    <h2>Student Registration</h2>
+    <p>Please provide your official details to apply for a SmartID.</p>
+
+    <form id="registerForm" enctype="multipart/form-data">
+
+      <!-- PERSONAL INFORMATION -->
+      <div class="section-title">Personal Information</div>
+
+      <div class="row">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" name="first_name" maxlength="30" placeholder="e.g. John" required>
+        </div>
+
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" name="second_name" maxlength="30" placeholder="e.g. Doe" required>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label>Father Name</label>
+          <input type="text" name="father_name" maxlength="50" placeholder="Full Name" required>
+        </div>
+
+        <div class="form-group">
+          <label>Mother Name</label>
+          <input type="text" name="mother_name" maxlength="50" placeholder="Full Name" required>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group">
+          <label>Gender</label>
+          <select name="gender" required>
+            <option value="">Select Gender</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Date of Birth</label>
+          <input type="date" name="date_of_birth" required>
+        </div>
+      </div>
+
+      <!-- CONTACT & ACADEMICS -->
+      <div class="section-title">Contact & Academics</div>
+
+      <div class="row">
+        <div class="form-group">
+          <label>Mobile Number</label>
+          <input type="tel" name="mobile_number" maxlength="10" pattern="[6-9]{1}[0-9]{9}"
+            placeholder="10 digit number" required>
+        </div>
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" name="email" maxlength="60" placeholder="yourname@example.com" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Department</label>
+        <select id="department" name="department" onchange="updateCourses()" required>
+          <option value="">Select Department</option>
+          <option value="School of Computer and Information Science">School of Computer and Information Science</option>
+          <option value="School of Physics">School of Physics</option>
+          <option value="School of Chemistry">School of Chemistry</option>
+          <option value="School of Mathematics">School of Mathematics</option>
+          <option value="School of Life Sciences">School of Life Sciences</option>
+          <option value="School of Management">School of Management</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Course</label>
+        <select id="course" name="course" required>
+          <option value="">Select Course (Select Department First)</option>
+        </select>
+      </div>
+
+      <!-- DOCUMENTS -->
+      <div class="section-title">Documents</div>
+
+      <div class="row">
+        <div class="form-group">
+          <label>Passport Size Photo</label>
+          <input type="file" name="photo" accept="image/*" required>
+        </div>
+
+        <div class="form-group">
+          <label>Signature Scan</label>
+          <input type="file" name="signature" accept="image/*" required>
+        </div>
+      </div>
+
+      <!-- ADDRESS DETAILS -->
+      <div class="section-title">Address Details</div>
+
+      <div class="address-box">
+        <h3>Correspondence Address</h3>
+        <div class="row">
+          <div class="form-group">
+            <label>House No</label>
+            <input type="text" id="correspondence_hno" name="correspondence_hno" placeholder="House/Flat No">
+          </div>
+          <div class="form-group">
+            <label>Street</label>
+            <input type="text" id="correspondence_street" name="correspondence_street" placeholder="Street/Area">
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <label>City</label>
+            <input type="text" id="correspondence_city" name="correspondence_city" placeholder="City">
+          </div>
+          <div class="form-group">
+            <label>District</label>
+            <input type="text" id="correspondence_district" name="correspondence_district" placeholder="District">
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <label>State</label>
+            <select id="correspondence_state" name="correspondence_state">
+              <option value="">Select State</option>
+              <option>Andhra Pradesh</option>
+              <option>Telangana</option>
+              <option>Tamil Nadu</option>
+              <option>Karnataka</option>
+              <option>Kerala</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Pincode</label>
+            <input type="text" id="correspondence_pincode" name="correspondence_pincode" maxlength="6" placeholder="6 Digits">
+          </div>
+        </div>
+      </div>
+
+      <div class="checkbox-group" onclick="document.getElementById('sameAddress').click();">
+        <input type="checkbox" id="sameAddress" onclick="event.stopPropagation(); copyAddress();">
+        <label for="sameAddress">Permanent Address is same as Correspondence Address</label>
+      </div>
+
+      <div class="address-box">
+        <h3>Permanent Address</h3>
+        <div class="row">
+          <div class="form-group">
+            <label>House No</label>
+            <input type="text" id="permanent_hno" name="permanent_hno" placeholder="House/Flat No">
+          </div>
+          <div class="form-group">
+            <label>Street</label>
+            <input type="text" id="permanent_street" name="permanent_street" placeholder="Street/Area">
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <label>City</label>
+            <input type="text" id="permanent_city" name="permanent_city" placeholder="City">
+          </div>
+          <div class="form-group">
+            <label>District</label>
+            <input type="text" id="permanent_district" name="permanent_district" placeholder="District">
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <label>State</label>
+            <select id="permanent_state" name="permanent_state">
+              <option value="">Select State</option>
+              <option>Andhra Pradesh</option>
+              <option>Telangana</option>
+              <option>Tamil Nadu</option>
+              <option>Karnataka</option>
+              <option>Kerala</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Pincode</label>
+            <input type="text" id="permanent_pincode" name="permanent_pincode" maxlength="6" placeholder="6 Digits">
+          </div>
+        </div>
+      </div>
+
+      <div class="buttons-row">
+        <button type="reset">Reset Form</button>
+        <button type="submit">Submit Registration Application</button>
+      </div>
+
+    </form>
+
+  </div>
+
+  <!-- CONFIRMATION MODAL -->
+  <div id="confirmModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-icon">!</div>
+      <h3>Confirm Submission</h3>
+      <p>Are you sure you want to submit your application? Please verify all details before proceeding.</p>
+      <div class="modal-buttons">
+        <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="modal-btn modal-btn-confirm" onclick="confirmSubmit()">Yes, Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Prevent back-button from showing the form after submission
+    window.addEventListener('pageshow', function (event) {
+      if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+        window.location.reload();
+      }
+    });
+
+    window.onload = function() {
+      const dobInput = document.querySelector('input[name="date_of_birth"]');
+      const today = new Date();
+      const maxDate = new Date(today.getFullYear() - 16, today.getMonth(), today.getDate());
+      const formattedDate = maxDate.toISOString().split('T')[0];
+      dobInput.setAttribute('max', formattedDate);
+    };
+
+    const coursesByDepartment = {
+      "School of Computer and Information Science": ["I.Mtech CSE", "M.Tech Computer Science-AI", "M.Tech Computer Science-Data Science", "M.Tech Computer Science", "PHD Computer Science"],
+      "School of Physics": ["B.Sc Physics", "M.Sc Physics", "PHD Physics"],
+      "School of Chemistry": ["B.Sc Chemistry", "M.Sc Chemistry", "PHD Chemistry"],
+      "School of Mathematics": ["B.Sc Mathematics", "M.Sc Mathematics", "PHD Mathematics"],
+      "School of Life Sciences": ["B.Sc Life Sciences", "M.Sc Life Sciences", "PHD Life Sciences"],
+      "School of Management": ["MBA"]
+    };
+
+    function updateCourses() {
+      const dept = document.getElementById("department").value;
+      const courseDropdown = document.getElementById("course");
+      courseDropdown.innerHTML = '<option value="">Select Course</option>';
+      if (coursesByDepartment[dept]) {
+        coursesByDepartment[dept].forEach(course => {
+          const option = document.createElement("option");
+          option.value = course;
+          option.text = course;
+          courseDropdown.appendChild(option);
+        });
+      }
+    }
+
+    function copyAddress() {
+      const checked = document.getElementById("sameAddress").checked;
+      const fields = ["hno", "street", "city", "district", "state", "pincode"];
+      fields.forEach(f => {
+        const el = document.getElementById(`permanent_${f}`);
+        if(el) el.value = checked ? document.getElementById(`correspondence_${f}`).value : "";
+      });
+    }
+
+    function closeModal() {
+      document.getElementById('confirmModal').classList.remove('active');
+    }
+
+    function openModal() {
+      document.getElementById('confirmModal').classList.add('active');
+    }
+
+    let formToSubmit = null;
+
+    document.getElementById("registerForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      formToSubmit = this;
+      openModal();
+    });
+
+    async function confirmSubmit() {
+      if(!formToSubmit) return;
+      closeModal();
+      
+      const formData = new FormData(formToSubmit);
+      const btn = formToSubmit.querySelector('button[type="submit"]');
+      const originalText = btn.innerText;
+      btn.innerText = "Processing...";
+      btn.disabled = true;
+
+      try {
+        const res = await fetch("/student/register", {
+          method: "POST",
+          body: formData
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          alert("❌ Error: " + data.message);
+          btn.innerText = originalText;
+          btn.disabled = false;
+          return;
+        }
+
+        // Prevent going back
+        window.history.pushState(null, null, window.location.href);
+        window.onpopstate = function () {
+            window.history.go(1);
+        };
+
+        alert(`✅ Registration Successful!\n\nApplication ID: ${data.student_id}\n\nPlease wait for admin approval.`);
+        
+        // Redirect and replace history
+        window.location.replace("/student/login");
+        
+      } catch (err) {
+        alert("❌ Server error. Please check your connection.");
+        btn.innerText = originalText;
+        btn.disabled = false;
+      }
+    }
+  </script>
 
 </body>
+
 </html>

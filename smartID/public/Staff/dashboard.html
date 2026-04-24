@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Portal | SmartID</title>
+  <link rel="stylesheet" href="CSS/dashboard.css">
+</head>
+
+<body>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="logo">SmartID</div>
+    <div class="title">Staff Portal</div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1>Welcome to Staff Section</h1>
+    <p>Select your role to continue</p>
+  </section>
+
+  <!-- STAFF OPTIONS -->
+  <section class="staff-container">
+
+    <div class="staff-card" onclick="navigate('warden')">
+      <div class="icon">🏢</div>
+      <h3>Warden</h3>
+      <p>Manage hostel and student accommodations</p>
+    </div>
+
+    <div class="staff-card" onclick="navigate('faculty')">
+      <div class="icon">🎓</div>
+      <h3>Faculty</h3>
+      <p>Manage courses, attendance, and academics</p>
+    </div>
+
+    <div class="staff-card" onclick="navigate('nonTeaching')">
+      <div class="icon">🛠️</div>
+      <h3>Non-Teaching</h3>
+      <p>Administrative and support staff access</p>
+    </div>
+
+  </section>
+
+  <script>
+    function navigate(role) {
+      // Replace with your actual routes
+      window.location.href = `/staff/${role}`;
+    }
+  </script>
+
+</body>
+
+</html>

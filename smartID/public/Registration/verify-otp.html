@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP | SmartID</title>
+    <link rel="stylesheet" href="/CSS/setPassword.css">
+</head>
+<body>
+    <div class="container">
+        <div class="stepper">
+            <div class="step completed">
+                <div class="step-icon">✓</div>
+                <div class="step-label">Verify</div>
+            </div>
+            <div class="step active">
+                <div class="step-icon">2</div>
+                <div class="step-label">OTP</div>
+            </div>
+            <div class="step">
+                <div class="step-icon">3</div>
+                <div class="step-label">Secure</div>
+            </div>
+        </div>
+
+        <h2>Security Check</h2>
+        <p class="subtitle" id="otpSubtitle">Please enter the 6-digit code sent to your email.</p>
+
+        <div class="otp-container" id="otpFields">
+            <input type="text" class="otp-box" maxlength="1" pattern="\d*">
+            <input type="text" class="otp-box" maxlength="1" pattern="\d*">
+            <input type="text" class="otp-box" maxlength="1" pattern="\d*">
+            <input type="text" class="otp-box" maxlength="1" pattern="\d*">
+            <input type="text" class="otp-box" maxlength="1" pattern="\d*">
+            <input type="text" class="otp-box" maxlength="1" pattern="\d*">
+        </div>
+
+        <button onclick="verifyOTP()" id="mainBtn">
+            <span id="btnText">Verify & Continue</span>
+            <div id="spinner" class="spinner"></div>
+        </button>
+        
+        <button id="resendBtn" disabled onclick="resendOTP()">Resend OTP in 30s</button>
+
+        <div id="toast" class="toast"></div>
+    </div>
+
+    <script src="/JS/page2.js"></script>
+    <script>
+        // Auto-focus logic for OTP boxes
+        const boxes = document.querySelectorAll('.otp-box');
+        boxes.forEach((box, idx) => {
+            box.addEventListener('input', (e) => {
+                if (e.target.value && idx < boxes.length - 1) {
+                    boxes[idx + 1].focus();
+                }
+            });
+            box.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && idx > 0) {
+                    boxes[idx - 1].focus();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

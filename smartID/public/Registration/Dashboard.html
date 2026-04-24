@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SmartID Student Login</title>
   <link rel="stylesheet" href="/CSS/dashboard.css">
 </head>
+
 <body>
 
   <div class="bg-circle"></div>
@@ -19,7 +21,8 @@
     <div class="card-header">
       <div class="icon">
         <svg viewBox="0 0 24 24">
-          <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+          <path
+            d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
         </svg>
       </div>
       <h2>Student Login</h2>
@@ -32,45 +35,62 @@
         Invalid Student ID or password. Please try again.
       </div>
 
-      <form action="/login" method="POST">
+      <form action="/student/login" method="POST">
 
         <input type="hidden" name="role" value="student">
 
         <div class="input-group">
           <label>Student ID</label>
           <div class="input-wrap">
-            <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
-            <input type="text" name="username" placeholder="Enter your Student ID" required>
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
+            </svg>
+            <input type="text" name="student_id" placeholder="Enter your Student ID" required>
           </div>
         </div>
 
         <div class="input-group">
           <label>Password</label>
           <div class="input-wrap">
-            <svg viewBox="0 0 24 24"><path d="M18 8h-1V6A5 5 0 0 0 7 6v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zm-6 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm3.1-9H8.9V6a3.1 3.1 0 0 1 6.2 0v2z"/></svg>
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M18 8h-1V6A5 5 0 0 0 7 6v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zm-6 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm3.1-9H8.9V6a3.1 3.1 0 0 1 6.2 0v2z" />
+            </svg>
             <input type="password" name="password" id="passwordInput" placeholder="Enter your password" required>
             <span class="eye-btn" onclick="togglePassword()">
-              <svg id="eyeIcon" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5C21.3 7.6 17 4.5 12 4.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>
+              <svg id="eyeIcon" viewBox="0 0 24 24">
+                <path
+                  d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5C21.3 7.6 17 4.5 12 4.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" />
+              </svg>
             </span>
           </div>
         </div>
 
         <button type="submit" class="btn-login">
           <span>Login</span>
-          <svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5v10z"/></svg>
+          <svg viewBox="0 0 24 24">
+            <path d="M10 17l5-5-5-5v10z" />
+          </svg>
         </button>
 
       </form>
 
       <div class="divider"><span>or</span></div>
 
-      <a href="/Registration/student-registration.html" class="btn-new-login">
-        <svg viewBox="0 0 24 24"><path d="M15 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm-9 2v2h18v-2c0-2.7-5.4-4-9-4s-9 1.3-9 4zm7-2H4c-1.1 0-2 .9-2 2v2h18v-2c0-1.1-.9-2-2-2h-5z"/></svg>
+      <a href="student-registration.html" class="btn-new-login">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M15 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm-9 2v2h18v-2c0-2.7-5.4-4-9-4s-9 1.3-9 4zm7-2H4c-1.1 0-2 .9-2 2v2h18v-2c0-1.1-.9-2-2-2h-5z" />
+        </svg>
         New Registration
       </a>
 
-      <a href="/Registration/set-password.html" class="btn-new-login">
-        <svg viewBox="0 0 24 24"><path d="M18 8h-1V6A5 5 0 0 0 7 6v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zm-6 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm3.1-9H8.9V6a3.1 3.1 0 0 1 6.2 0v2z"/></svg>
+      <a href="enter-details.html" class="btn-new-login">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M18 8h-1V6A5 5 0 0 0 7 6v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zm-6 9a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm3.1-9H8.9V6a3.1 3.1 0 0 1 6.2 0v2z" />
+        </svg>
         First Time Login
       </a>
 
@@ -88,7 +108,7 @@
 
     function togglePassword() {
       const input = document.getElementById("passwordInput");
-      const icon  = document.getElementById("eyeIcon");
+      const icon = document.getElementById("eyeIcon");
       if (input.type === "password") {
         input.type = "text";
         icon.querySelector("path").setAttribute("d",
@@ -104,4 +124,5 @@
   </script>
 
 </body>
+
 </html>

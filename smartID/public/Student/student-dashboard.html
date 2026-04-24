@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard | SmartID</title>
+  <link rel="stylesheet" href="/CSS/student-dashboard.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+
+<body>
+
+  <!-- ══ QR MODAL ══ -->
+  <div id="qrModal" class="modal-overlay" onclick="closeQRModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">Smart QR Access</h2>
+        <button class="modal-close" onclick="closeQRModal()">&times;</button>
+      </div>
+      <div id="qrcodeModal"></div>
+      <div class="modal-footer">
+        <p>Keep this code ready for scanning</p>
+        <span id="modalTimestamp"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TOPBAR ══ -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo-mark">SI</div>
+      <span class="topbar-title">SmartID Portal</span>
+    </div>
+    <div class="topbar-right">
+      <div class="student-chip">
+        <div class="avatar" id="avatarInitials">–</div>
+        <span class="student-chip-name" id="topbarName">Loading...</span>
+      </div>
+      <a href="#" class="logout-btn" onclick="handleLogout(event)">
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor;">
+          <path
+            d="M17 8l-1.4 1.4L17.2 11H9v2h8.2l-1.6 1.6L17 16l4-4-4-4zM5 5h7V3H5C3.9 3 3 3.9 3 5v14c0 1.1.9 2 2 2h7v-2H5V5z" />
+        </svg>
+        Logout
+      </a>
+    </div>
+  </header>
+
+  <!-- ══ HERO ══ -->
+  <section class="hero">
+    <div class="hero-blob hero-blob-1"></div>
+    <div class="hero-blob hero-blob-2"></div>
+    <div class="hero-blob hero-blob-3"></div>
+    <p class="hero-label">Welcome back</p>
+    <h1 class="hero-name" id="heroName">Loading...</h1>
+    <div class="hero-badges">
+      <span class="hero-badge gold" id="heroBadgeId">
+        <svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:currentColor;">
+          <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" />
+        </svg>
+        <span id="heroId">—</span>
+      </span>
+      <span class="hero-badge white" id="heroBadgeCourse">
+        <span id="heroCourse">—</span>
+      </span>
+      <span class="hero-badge white" id="heroBadgeDept">
+        <span id="heroDept">—</span>
+      </span>
+    </div>
+  </section>
+
+  <!-- ══ MAIN ══ -->
+  <main class="main">
+
+    <!-- Profile Card -->
+    <p class="section-title">Student Profile</p>
+    <div class="profile-card">
+
+      <div class="photo-wrap" id="photoWrap">
+        <!-- Shows initials by default; replaced by <img> if photo exists -->
+        <span id="photoInitials">–</span>
+      </div>
+
+      <div>
+        <div class="profile-info-top">
+          <div>
+            <div class="profile-full-name" id="profileName">Loading...</div>
+            <div class="profile-dept" id="profileDept">—</div>
+          </div>
+          <div class="status-badge">
+            <span class="status-dot"></span>
+            Active
+          </div>
+        </div>
+
+        <div class="profile-fields">
+          <div class="field">
+            <span class="field-label">Student ID</span>
+            <span class="field-value" id="fieldId">—</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Course</span>
+            <span class="field-value" id="fieldCourse">—</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Department</span>
+            <span class="field-value" id="fieldDept">—</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Email</span>
+            <span class="field-value" id="fieldEmail">—</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Mobile</span>
+            <span class="field-value" id="fieldMobile">—</span>
+          </div>
+          <div class="field">
+            <span class="field-label">Admission Year</span>
+            <span class="field-value" id="fieldYear">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Module Cards -->
+    <p class="section-title">My Modules</p>
+    <div class="modules-grid">
+
+
+
+      <!-- ACADEMICS -->
+      <a href="/Student/academics.html" class="module-card academics">
+
+        <div class="module-card-header">
+          <div class="module-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z" />
+            </svg>
+          </div>
+          <div class="module-card-title">Academics</div>
+          <div class="module-card-subtitle">Courses, attendance & results</div>
+        </div>
+        <div class="module-card-body">
+          <div class="module-stat">
+            <span class="stat-label">Current Semester</span>
+            <span class="stat-value" id="acadSem">—</span>
+          </div>
+          <div class="module-stat">
+            <span class="stat-label">Attendance</span>
+            <span class="stat-value green" id="acadAttendance">—</span>
+          </div>
+          <div class="module-stat">
+            <span class="stat-label">Registered Courses</span>
+            <span class="stat-value" id="acadCourses">—</span>
+          </div>
+          <div class="module-cta">
+            View Details
+            <svg viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- MESS -->
+      <a href="/student/mess" class="module-card mess">
+        <div class="module-card-header">
+          <div class="module-icon">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z" />
+            </svg>
+          </div>
+          <div class="module-card-title">Mess</div>
+          <div class="module-card-subtitle">Menu, balance & feedback</div>
+        </div>
+        <div class="module-card-body">
+          <div class="module-stat">
+            <span class="stat-label">Today's Meal</span>
+            <span class="stat-value" id="messMeal">—</span>
+          </div>
+          <div class="module-stat">
+            <span class="stat-label">Wallet Balance</span>
+            <span class="stat-value green" id="messBalance">—</span>
+          </div>
+          <div class="module-stat">
+            <span class="stat-label">Mess Status</span>
+            <span class="stat-value green" id="messStatus">—</span>
+          </div>
+          <div class="module-cta">
+            View Menu
+            <svg viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- LIBRARY -->
+      <a href="/student/library" class="module-card library">
+        <div class="module-card-header">
+          <div class="module-icon">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z" />
+            </svg>
+          </div>
+          <div class="module-card-title">Library</div>
+          <div class="module-card-subtitle">Books, dues & reservations</div>
+        </div>
+        <div class="module-card-body">
+          <div class="module-stat">
+            <span class="stat-label">Books Issued</span>
+            <span class="stat-value" id="libIssued">—</span>
+          </div>
+          <div class="module-stat">
+            <span class="stat-label">Due Date</span>
+            <span class="stat-value orange" id="libDue">—</span>
+          </div>
+          <div class="module-stat">
+            <span class="stat-label">Fine Pending</span>
+            <span class="stat-value red" id="libFine">—</span>
+          </div>
+          <div class="module-cta">
+            View Books
+            <svg viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </div>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- Bottom Row -->
+    <div class="bottom-row">
+
+      <!-- Notices -->
+      <div class="notice-card">
+        <div class="notice-card-title">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+          </svg>
+          Notices & Announcements
+        </div>
+        <div class="notice-list">
+          <div class="notice-item">
+            <div class="notice-dot"></div>
+            <div>
+              <div class="notice-text">End-semester examinations schedule has been released. Check the academic portal
+                for details.</div>
+              <div class="notice-date">April 18, 2026</div>
+            </div>
+          </div>
+          <div class="notice-item">
+            <div class="notice-dot"></div>
+            <div>
+              <div class="notice-text">Mess fee payment due by April 30. Pay online via the Mess module to avoid late
+                charges.</div>
+              <div class="notice-date">April 15, 2026</div>
+            </div>
+          </div>
+          <div class="notice-item">
+            <div class="notice-dot"></div>
+            <div>
+              <div class="notice-text">Library will remain closed on April 21 (public holiday). Plan your book returns
+                accordingly.</div>
+              <div class="notice-date">April 14, 2026</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ID Card Preview -->
+      <div class="idcard-card">
+        <div class="idcard-card-title">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
+          </svg>
+          Digital ID Card
+        </div>
+        <div class="id-card-preview" id="idCardToDownload">
+          <div class="id-preview-header">
+            <div class="id-preview-logo">SmartID — University</div>
+            <div class="id-preview-status">STUDENT</div>
+          </div>
+          
+          <div class="id-preview-content">
+            <div class="id-preview-photo" id="previewPhotoWrap">
+              <span id="previewPhotoInitials">SI</span>
+            </div>
+            <div class="id-preview-details">
+              <div class="id-preview-name" id="previewName">—</div>
+              <div class="id-preview-id" id="previewId">—</div>
+              <div class="id-preview-dept" id="previewDept">—</div>
+              <div class="id-preview-course" id="previewCourse">—</div>
+            </div>
+          </div>
+          
+          <div class="id-preview-footer">
+            <div class="id-preview-footer-left">
+              <span>Valid through 2026-2030</span>
+              <div class="id-preview-chip"></div>
+            </div>
+          </div>
+        </div>
+        <button class="id-download-btn" onclick="downloadID()">
+          <svg viewBox="0 0 24 24">
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+          </svg>
+          Download ID Card
+        </button>
+      </div>
+
+      <!-- QR Code Card -->
+      <div class="qr-card">
+        <div class="qr-card-title">
+          <svg viewBox="0 0 24 24">
+            <path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm13-2h3v2h-3v-2zm-3 0h2v2h-2v-2zm3 3h3v2h-3v-2zm-3 0h2v2h-2v-2zm3 3h3v2h-3v-2zm-3 0h2v2h-2v-2z" />
+          </svg>
+          Smart QR Access
+        </div>
+        <div class="qr-display-area">
+          <div id="qrcode" onclick="openQRModal()"></div>
+          <div class="qr-info">
+            <p>Scan for secure verification</p>
+            <span id="qrTimestamp">Updated just now</span>
+          </div>
+        </div>
+        <button class="qr-refresh-btn" onclick="refreshQRCode()">
+          <svg viewBox="0 0 24 24">
+            <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
+          </svg>
+          Refresh QR Code
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    /* ── LOGOUT ── */
+    function handleLogout(e) {
+      e.preventDefault();
+      fetch('/student/logout', { credentials: 'include' })
+        .finally(() => window.location.replace('/student/login'));
+    }
+
+    /* ── LOAD STUDENT DATA ── */
+    async function loadStudent() {
+      try {
+        const res = await fetch('/student/me', { credentials: 'include' });
+        if (!res.ok) throw new Error('Not authenticated');
+        const { student } = await res.json();
+        populate(student);
+      } catch {
+        window.location.replace('/student/login');
+      }
+    }
+
+    function populate(s) {
+      const fullName = `${s.first_name} ${s.second_name}`;
+      const initials = `${s.first_name?.[0] ?? ''}${s.second_name?.[0] ?? ''}`.toUpperCase();
+
+      /* Topbar */
+      document.getElementById('topbarName').textContent = s.first_name;
+      document.getElementById('avatarInitials').textContent = initials;
+
+      /* Hero */
+      document.getElementById('heroName').textContent = fullName;
+      document.getElementById('heroId').textContent = s.student_id;
+      document.getElementById('heroCourse').textContent = s.course;
+      document.getElementById('heroDept').textContent = s.department;
+
+      /* Profile card */
+      document.getElementById('photoInitials').textContent = initials;
+      document.getElementById('profileName').textContent = fullName;
+      document.getElementById('profileDept').textContent = s.department;
+      document.getElementById('fieldId').textContent = s.student_id;
+      document.getElementById('fieldCourse').textContent = s.course;
+      document.getElementById('fieldDept').textContent = s.department;
+      document.getElementById('fieldEmail').textContent = s.email || 'Not provided';
+      document.getElementById('fieldMobile').textContent = s.mobile_number || 'Not provided';
+      document.getElementById('fieldYear').textContent = s.student_id?.substring(0, 2)
+        ? '20' + s.student_id.substring(0, 2)
+        : '—';
+
+      /* Academics placeholders */
+      // Will be loaded from database later
+
+      /* Mess placeholders */
+      // Will be loaded from database later
+
+      /* Library placeholders */
+      // Will be loaded from database later
+
+      /* ID card preview */
+      document.getElementById('previewName').textContent = fullName;
+      document.getElementById('previewId').textContent = s.student_id;
+      document.getElementById('previewCourse').textContent = s.course;
+      document.getElementById('previewDept').textContent = s.department;
+      document.getElementById('previewPhotoInitials').textContent = initials;
+
+      /* Update Photos */
+      if (s.photo) {
+        const photoUrl = '/' + s.photo;
+        
+        // Update Profile Card Photo
+        const photoWrap = document.getElementById('photoWrap');
+        photoWrap.innerHTML = `<img src="${photoUrl}" alt="Profile">`;
+        
+        // Update Digital ID Photo
+        const previewPhotoWrap = document.getElementById('previewPhotoWrap');
+        previewPhotoWrap.innerHTML = `<img src="${photoUrl}" alt="Profile">`;
+      }
+
+      /* Academics Data Fetch */
+      fetch('/student/academics/data', { credentials: 'include' })
+        .then(r => r.json())
+        .then(data => {
+          const sem = data.semesters[0];
+          if (sem) {
+            document.getElementById('acadSem').textContent = `Semester ${sem.semester_number}`;
+          }
+          
+          const enroll = data.enrollment;
+          if (enroll && enroll.length > 0) {
+            document.getElementById('acadCourses').textContent = `${enroll.length} Subjects`;
+            
+            let totalAttended = 0;
+            let totalClasses = 0;
+            enroll.forEach(e => {
+              totalAttended += (e.classes_attended || 0);
+              totalClasses += (e.total_classes || 0);
+            });
+            
+            const pct = totalClasses > 0 ? Math.round((totalAttended / totalClasses) * 100) : 0;
+            const attEl = document.getElementById('acadAttendance');
+            attEl.textContent = `${pct}%`;
+            attEl.className = `stat-value ${pct < 75 ? 'red' : 'green'}`;
+          }
+        })
+        .catch(err => console.error("Dashboard academics fetch error:", err));
+
+      /* Generate Initial QR */
+      generateQR(s.student_id);
+    }
+
+    function downloadID() {
+      const card = document.getElementById("idCardToDownload");
+      const btn = document.querySelector('.id-download-btn');
+      const originalText = btn.innerHTML;
+      
+      btn.innerHTML = 'Generating...';
+      btn.disabled = true;
+
+      // To fix black corners, we temporarily remove border-radius if needed
+      // but since we are making it square as per user request, it should be fine.
+
+      html2canvas(card, {
+        scale: 3,
+        backgroundColor: "#7b1e2b", // Use card's base color instead of null to prevent transparency issues
+        useCORS: true,
+        logging: false,
+        width: card.offsetWidth,
+        height: card.offsetHeight
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `SmartID_${document.getElementById('previewId').textContent}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }).catch(err => {
+        console.error("Download failed:", err);
+        alert("Failed to generate ID image.");
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      });
+    }
+
+    let qrcode = null;
+
+    function generateQR(id) {
+      const qrMain = document.getElementById("qrcode");
+      const qrModal = document.getElementById("qrcodeModal");
+      
+      qrMain.innerHTML = "";
+      qrModal.innerHTML = "";
+      
+      const timestamp = new Date().getTime();
+      const qrData = JSON.stringify({ id, ts: timestamp, v: "1.0" });
+
+      // Main Dashboard QR
+      new QRCode(qrMain, {
+        text: qrData, width: 150, height: 150,
+        colorDark: "#7b1e2b", colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      // Modal QR (Large)
+      new QRCode(qrModal, {
+        text: qrData, width: 280, height: 280,
+        colorDark: "#000000", colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      const timeStr = "Last updated: " + new Date().toLocaleTimeString();
+      document.getElementById('qrTimestamp').textContent = timeStr;
+      document.getElementById('modalTimestamp').textContent = timeStr;
+    }
+
+    function openQRModal() {
+      document.getElementById('qrModal').classList.add('active');
+      document.body.style.overflow = 'hidden'; // prevent scroll
+    }
+
+    function closeQRModal() {
+      document.getElementById('qrModal').classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+
+    function refreshQRCode() {
+      const id = document.getElementById('heroId').textContent;
+      if (id && id !== "—") {
+        generateQR(id);
+        const btn = document.querySelector('.qr-refresh-btn');
+        btn.classList.add('rotating');
+        setTimeout(() => btn.classList.remove('rotating'), 500);
+      }
+    }
+
+    window.onload = loadStudent;
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mess Dashboard | SmartID</title>
+    <link rel="stylesheet" href="/Staff/CSS/warden-dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        .scanner-container {
+            max-width: 500px;
+            margin: 20px auto;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #1e293b;
+            border: 2px solid var(--primary);
+        }
+        #reader {
+            width: 100% !important;
+            border: none !important;
+        }
+        #reader__status_span {
+            color: white !important;
+        }
+        .scan-result-card {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--emerald);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            display: none;
+            text-align: center;
+        }
+        .meal-selector {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .meal-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #334155;
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .meal-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon">M</div>
+        <span>SmartID Mess</span>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a class="nav-item active" onclick="showSection('overview')">
+            <i>🏠</i> <span>Overview</span>
+        </a>
+        <a class="nav-item" onclick="showSection('scanner')">
+            <i>📷</i> <span>QR Scanner</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <button class="logout-btn" style="background: #475569;" onclick="window.location.href='/'">Back to Home</button>
+    </div>
+</div>
+
+<div class="main">
+    <div class="topbar">
+        <h2 id="topbarTitle">Mess Overview</h2>
+        <div class="admin-info" id="staffName">Mess Incharge</div>
+    </div>
+
+    <!-- OVERVIEW SECTION -->
+    <div class="section" id="section-overview" style="display:block;">
+        <div class="stats-grid">
+            <div class="stat-card card-blue">
+                <div class="icon-box">👥</div>
+                <div class="label">Total Students</div>
+                <div class="value" id="stat-totalStudents">0</div>
+            </div>
+            <div class="stat-card card-emerald">
+                <div class="icon-box">✅</div>
+                <div class="label">Visited Today</div>
+                <div class="value" id="stat-visitedToday">0</div>
+            </div>
+        </div>
+        
+        <h3>Mess: <span id="hostelNameDisplay" style="color: var(--primary);">Loading...</span></h3>
+    </div>
+
+    <!-- SCANNER SECTION -->
+    <div class="section" id="section-scanner" style="display:none;">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h3>Scan Student QR</h3>
+            <p style="color: var(--text-muted);">Point the camera at the student's digital ID</p>
+        </div>
+
+        <div class="meal-selector">
+            <button class="meal-btn active" onclick="setMeal('Breakfast', this)">Breakfast</button>
+            <button class="meal-btn" onclick="setMeal('Lunch', this)">Lunch</button>
+            <button class="meal-btn" onclick="setMeal('Dinner', this)">Dinner</button>
+        </div>
+
+        <div class="scanner-container">
+            <div id="reader"></div>
+        </div>
+
+        <div id="scanResult" class="scan-result-card">
+            <h4 id="resultMessage" style="margin-bottom: 5px;">Access Granted</h4>
+            <p id="studentName" style="font-size: 1.2rem; font-weight: 600; color: white;">—</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    let selectedMeal = "Breakfast";
+    let html5QrcodeScanner = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadStats();
+    });
+
+    function loadStats() {
+        fetch('/staff/mess/stats')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('stat-totalStudents').innerText = data.totalStudents || 0;
+                document.getElementById('stat-visitedToday').innerText = data.visitedToday || 0;
+                document.getElementById('hostelNameDisplay').innerText = data.hostelName || '—';
+            });
+    }
+
+    function showSection(name) {
+        document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+        event.currentTarget.classList.add("active");
+
+        document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+        document.getElementById("section-" + name).style.display = "block";
+
+        if(name === 'scanner') {
+            startScanner();
+        } else {
+            stopScanner();
+            loadStats();
+        }
+    }
+
+    function setMeal(meal, btn) {
+        selectedMeal = meal;
+        document.querySelectorAll('.meal-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    function startScanner() {
+        if(html5QrcodeScanner) return;
+        
+        html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", { fps: 10, qrbox: 250 }
+        );
+
+        html5QrcodeScanner.render(onScanSuccess);
+    }
+
+    function stopScanner() {
+        if(html5QrcodeScanner) {
+            html5QrcodeScanner.clear();
+            html5QrcodeScanner = null;
+        }
+    }
+
+    function onScanSuccess(decodedText) {
+        // decodedText is the student_id
+        fetch('/staff/mess/scan', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ 
+                student_id: decodedText,
+                meal_type: selectedMeal
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            const resultDiv = document.getElementById('scanResult');
+            const msgEl = document.getElementById('resultMessage');
+            const nameEl = document.getElementById('studentName');
+
+            resultDiv.style.display = 'block';
+            if(data.success) {
+                resultDiv.style.background = 'rgba(16, 185, 129, 0.1)';
+                resultDiv.style.borderColor = 'var(--emerald)';
+                msgEl.innerText = "Access Granted";
+                msgEl.style.color = "var(--emerald)";
+                nameEl.innerText = data.name;
+            } else {
+                resultDiv.style.background = 'rgba(239, 68, 68, 0.1)';
+                resultDiv.style.borderColor = 'var(--error)';
+                msgEl.innerText = "Access Denied";
+                msgEl.style.color = "var(--error)";
+                nameEl.innerText = data.message;
+            }
+
+            // Hide result after 3 seconds
+            setTimeout(() => { resultDiv.style.display = 'none'; }, 3000);
+        });
+    }
+</script>
+
+</body>
+</html>

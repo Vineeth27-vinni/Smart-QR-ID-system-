@@ -21,11 +21,11 @@
         <a class="nav-item" onclick="showSection('students')" id="nav-students">
             <i>🎓</i> <span>Students</span>
         </a>
-        <a class="nav-item" onclick="showSection('applications')" id="nav-applications">
-            <i>📝</i> <span>Applications</span>
-        </a>
         <a class="nav-item" onclick="showSection('newstaff')" id="nav-newstaff">
-            <i>👤</i> <span>Add Staff</span>
+            <i>👥</i> <span>Staff</span>
+        </a>
+        <a class="nav-item" onclick="showSection('addhostel')" id="nav-addhostel" style="display:none;">
+            <i>🏢</i> <span>Hostels</span>
         </a>
     </nav>
 
@@ -48,7 +48,7 @@
                 <div class="label">Total Students</div>
                 <div class="value" id="stat-totalStudents">0</div>
             </div>
-            <div class="stat-card card-amber" onclick="showSection('applications')">
+            <div class="stat-card card-amber" onclick="showSection('students')">
                 <div class="icon-box">⏳</div>
                 <div class="label">Pending Approvals</div>
                 <div class="value" id="stat-pendingApprovals">0</div>
@@ -64,8 +64,26 @@
         <p style="color: var(--text-muted);">Welcome to the SmartID management portal. Use the sidebar or the cards above to navigate through different management sections.</p>
     </div>
 
-    <!-- STUDENTS SECTION -->
+    <!-- STUDENTS SECTION (Unified) -->
     <div class="section" id="section-students">
+        <div id="pending-applications-container" style="margin-bottom: 40px;">
+            <h3 style="color: var(--amber); border-left: 4px solid var(--amber); padding-left: 10px;">Pending Enrollment Applications</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Application ID</th>
+                            <th>Student Name</th>
+                            <th>Department</th>
+                            <th>Course</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="applicationsTable"></tbody>
+                </table>
+            </div>
+        </div>
+
         <h3>Managed Students</h3>
         <div class="table-container">
             <table>
@@ -83,29 +101,53 @@
         </div>
     </div>
 
-    <!-- APPLICATIONS SECTION -->
-    <div class="section" id="section-applications">
-        <h3>Pending Enrollment Applications</h3>
+    <!-- STAFF MANAGEMENT SECTION -->
+    <div class="section" id="section-newstaff">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h3>Staff Management</h3>
+            <button class="submit-btn" style="width: auto; padding: 10px 20px;" onclick="openAddStaffModal()">+ Add New Staff</button>
+        </div>
+
+        <!-- FILTERS -->
+        <div class="form-container" style="display: flex; gap: 20px; padding: 20px; margin-bottom: 30px;">
+            <div class="form-group" style="flex: 1; margin: 0;">
+                <label>Filter by Role</label>
+                <select id="filter-role" onchange="filterStaff()">
+                    <option value="">All Roles</option>
+                    <option value="Warden">Warden</option>
+                    <option value="Faculty">Faculty</option>
+                    <option value="Mess incharge">Mess incharge</option>
+                    <option value="Office admin">Office admin</option>
+                    <option value="Librarian">Librarian</option>
+                    <option value="admin">Administrator</option>
+                </select>
+            </div>
+            <div class="form-group" style="flex: 1; margin: 0;">
+                <label>Filter by Department</label>
+                <input type="text" id="filter-dept" placeholder="Search department..." oninput="filterStaff()">
+            </div>
+        </div>
+
         <div class="table-container">
             <table>
                 <thead>
                     <tr>
-                        <th>Application ID</th>
-                        <th>Student Name</th>
-                        <th>Department</th>
-                        <th>Course</th>
-                        <th>Action</th>
+                        <th>Staff ID</th>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Department / Hostel</th>
+                        <th>Email</th>
                     </tr>
                 </thead>
-                <tbody id="applicationsTable"></tbody>
+                <tbody id="staffTableBody"></tbody>
             </table>
         </div>
     </div>
 
-    <!-- ADD STAFF SECTION -->
-    <div class="section" id="section-newstaff">
-        <h3>System User Management</h3>
-        <div class="form-container">
+    <!-- ADD STAFF MODAL -->
+    <div id="addStaffModal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center;">
+        <div class="modal-card" style="background:#1e293b; padding:30px; border-radius:16px; width:500px; max-height: 90vh; overflow-y: auto;">
+            <h3 style="margin-bottom:20px;">Register New Staff</h3>
             <div class="form-group">
                 <label>Full Name</label>
                 <input type="text" id="sf_name" placeholder="Enter name">
@@ -124,12 +166,110 @@
             </div>
             <div class="form-group">
                 <label>System Role</label>
-                <select id="sf_role">
-                    <option value="staff">Staff Member</option>
+                <select id="sf_role" onchange="toggleStaffFields()">
                     <option value="admin">Administrator</option>
+                    <option value="Warden">Warden</option>
+                    <option value="Faculty">Faculty</option>
+                    <option value="Office admin">Office admin</option>
+                    <option value="Mess incharge">Mess incharge</option>
+                    <option value="Librarian">Librarian</option>
                 </select>
             </div>
-            <button class="submit-btn" onclick="addStaff()">Register User</button>
+            <div class="form-group" id="group-department" style="display:none;">
+                <label>Department</label>
+                <select id="sf_department">
+                    <option value="">Select Department</option>
+                </select>
+            </div>
+            <div class="form-group" id="group-hostel" style="display:none;">
+                <label>Allotted Hostel</label>
+                <select id="sf_hostel">
+                    <option value="">Select Hostel</option>
+                </select>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button class="submit-btn" onclick="addStaff()" style="flex:1;">Register User</button>
+                <button class="submit-btn" onclick="closeAddStaffModal()" style="flex:1; background:#475569;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HOSTEL MANAGEMENT SECTION (Super Admin Only) -->
+    <div class="section" id="section-addhostel" style="display:none;">
+        <h3>Hostel Management</h3>
+        <div class="form-container" style="margin-bottom: 40px;">
+            <h4 style="margin-bottom: 20px;">Create New Hostel</h4>
+            <div class="row" style="display: flex; gap: 20px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Hostel Name</label>
+                    <input type="text" id="h_name" placeholder="e.g. Ramanujan Hostel">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Total Rooms</label>
+                    <input type="number" id="h_rooms" placeholder="e.g. 50">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Category</label>
+                    <select id="h_category">
+                        <option value="Boys">Boys</option>
+                        <option value="Girls">Girls</option>
+                    </select>
+                </div>
+            </div>
+            <button class="submit-btn" onclick="addHostel()">Create Hostel</button>
+        </div>
+
+        <h3>Existing Hostels</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Rooms</th>
+                        <th>Vacancies</th>
+                        <th>Warden</th>
+                        <th>Mess Incharge</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="hostelTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- EDIT HOSTEL MODAL -->
+    <div id="editHostelModal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center;">
+        <div class="modal-card" style="background:#1e293b; padding:30px; border-radius:16px; width:450px;">
+            <h3 style="margin-bottom:20px;">Edit Hostel: <span id="editH_NameTitle" style="color:var(--primary);"></span></h3>
+            <input type="hidden" id="editH_Id">
+            <div class="form-group">
+                <label>Number of Rooms</label>
+                <input type="number" id="editH_Rooms">
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select id="editH_Category">
+                    <option value="Boys">Boys</option>
+                    <option value="Girls">Girls</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Assign Warden</label>
+                <select id="editH_Warden">
+                    <option value="">No staff found</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Assign Mess Incharge</label>
+                <select id="editH_Mess">
+                    <option value="">No staff found</option>
+                </select>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button class="submit-btn" onclick="updateHostel()" style="flex:1;">Save Changes</button>
+                <button class="submit-btn" onclick="closeEditModal()" style="flex:1; background:#475569;">Cancel</button>
+            </div>
         </div>
     </div>
 </div>
@@ -145,7 +285,12 @@
         fetch('/admin/me')
             .then(res => res.json())
             .then(data => {
-                if(data.username) document.getElementById('adminName').innerText = data.username;
+                if(data.username) document.getElementById('adminName').innerText = data.username + (data.role === 'sadmin' ? ' (Super Admin)' : '');
+                
+                // Show Add Hostel option only for sadmin
+                if(data.role === 'sadmin') {
+                    document.getElementById('nav-addhostel').style.display = 'flex';
+                }
             });
     }
 
@@ -172,14 +317,19 @@
         const titles = {
             'overview': 'Dashboard Overview',
             'students': 'Student Management',
-            'applications': 'Enrollment Applications',
-            'newstaff': 'Add System Staff'
+            'newstaff': 'Staff Management',
+            'addhostel': 'Hostel Management'
         };
         document.getElementById("topbarTitle").innerText = titles[name];
+        
+        if(name === "addhostel") loadHostelsTable();
+        if(name === "newstaff") loadStaffList();
 
         // Load Data
-        if(name === "applications") loadApplications();
-        if(name === "students") loadStudents();
+        if(name === "students") {
+            loadApplications();
+            loadStudents();
+        }
         if(name === "overview") loadStats();
     }
 
@@ -216,11 +366,12 @@
         fetch("/admin/students")
             .then(res => res.json())
             .then(data => {
+                const container = document.getElementById("pending-applications-container");
                 const table = document.getElementById("applicationsTable");
                 const pending = data.filter(s => s.status === 'pending');
 
                 if(pending.length === 0){
-                    table.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:30px;'>No pending applications</td></tr>";
+                    table.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:20px; color:var(--text-muted);'>No pending applications found</td></tr>";
                     return;
                 }
 
@@ -246,6 +397,7 @@
             .then(data => {
                 alert(data.message);
                 loadApplications();
+                loadStudents();
                 loadStats();
             });
     }
@@ -257,6 +409,7 @@
             .then(data => {
                 alert(data.message);
                 loadApplications();
+                loadStudents();
                 loadStats();
             });
     }
@@ -287,13 +440,116 @@
         });
     }
 
+    function toggleStaffFields() {
+        const role = document.getElementById('sf_role').value;
+        const deptGroup = document.getElementById('group-department');
+        const hostelGroup = document.getElementById('group-hostel');
+
+        if (role === 'Faculty' || role === 'Office admin') {
+            deptGroup.style.display = 'block';
+            loadDepartmentsDropdown();
+        } else {
+            deptGroup.style.display = 'none';
+        }
+        
+        if (role === 'Warden' || role === 'Mess incharge') {
+            hostelGroup.style.display = 'block';
+            loadHostelsDropdown();
+        } else {
+            hostelGroup.style.display = 'none';
+        }
+    }
+
+    function loadDepartmentsDropdown() {
+        const dropdown = document.getElementById('sf_department');
+        if (dropdown.options.length > 1) return;
+
+        fetch('/student/departments-courses')
+            .then(res => res.json())
+            .then(data => {
+                Object.keys(data).forEach(dept => {
+                    const opt = document.createElement('option');
+                    opt.value = dept;
+                    opt.innerText = dept;
+                    dropdown.appendChild(opt);
+                });
+            });
+    }
+
+    function loadHostelsDropdown() {
+        const dropdown = document.getElementById('sf_hostel');
+        if (dropdown.options.length > 1) return; // Already loaded
+
+        fetch('/admin/hostels')
+            .then(res => res.json())
+            .then(data => {
+                data.forEach(h => {
+                    const opt = document.createElement('option');
+                    opt.value = h.hostel_name; // Keeping it as name for now as per previous logic
+                    opt.innerText = h.hostel_name;
+                    dropdown.appendChild(opt);
+                });
+            });
+    }
+
+    let allStaffData = [];
+
+    function loadStaffList() {
+        fetch('/admin/all-staff')
+            .then(res => res.json())
+            .then(data => {
+                allStaffData = data;
+                displayStaff(data);
+            });
+    }
+
+    function displayStaff(data) {
+        const table = document.getElementById("staffTableBody");
+        if(data.length === 0) {
+            table.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:20px;'>No staff found</td></tr>";
+            return;
+        }
+        table.innerHTML = data.map(s => `
+            <tr>
+                <td style="font-weight:600; color:var(--primary);">${s.staff_id || 'ADMIN'}</td>
+                <td>${s.name}</td>
+                <td><span style="padding:4px 8px; border-radius:6px; font-size:12px; background:rgba(255,255,255,0.05);">${s.role}</span></td>
+                <td>${s.hostel || s.department || '—'}</td>
+                <td style="color:var(--text-muted); font-size:0.9rem;">${s.email || '—'}</td>
+            </tr>
+        `).join("");
+    }
+
+    function filterStaff() {
+        const role = document.getElementById('filter-role').value;
+        const dept = document.getElementById('filter-dept').value.toLowerCase();
+
+        const filtered = allStaffData.filter(s => {
+            const matchRole = !role || s.role === role;
+            const matchDept = !dept || (s.department && s.department.toLowerCase().includes(dept)) || (s.hostel && s.hostel.toLowerCase().includes(dept));
+            return matchRole && matchDept;
+        });
+
+        displayStaff(filtered);
+    }
+
+    function openAddStaffModal() {
+        document.getElementById('addStaffModal').style.display = 'flex';
+    }
+
+    function closeAddStaffModal() {
+        document.getElementById('addStaffModal').style.display = 'none';
+    }
+
     function addStaff(){
         const payload = {
             name: document.getElementById('sf_name').value,
             email: document.getElementById('sf_email').value,
             username: document.getElementById('sf_username').value,
             password: document.getElementById('sf_password').value,
-            role: document.getElementById('sf_role').value
+            role: document.getElementById('sf_role').value,
+            department: document.getElementById('sf_department').value,
+            hostel: document.getElementById('sf_hostel').value
         };
 
         if(!payload.name || !payload.username || !payload.password) {
@@ -308,10 +564,148 @@
         })
         .then(res => res.json())
         .then(data => {
-            alert(data.message || (data.success ? "Staff added successfully!" : "Error adding staff"));
             if(data.success) {
+                alert(data.staff_id ? `Staff added! ID: ${data.staff_id}` : "Administrator added successfully!");
                 loadStats();
-                showSection('overview');
+                loadStaffList();
+                closeAddStaffModal();
+                // Clear form
+                document.getElementById('sf_name').value = '';
+                document.getElementById('sf_email').value = '';
+                document.getElementById('sf_username').value = '';
+                document.getElementById('sf_password').value = '';
+                document.getElementById('sf_department').value = '';
+                document.getElementById('sf_hostel').value = '';
+            } else {
+                alert(data.message || "Error adding staff");
+            }
+        });
+    }
+    function addHostel() {
+        const payload = {
+            hostel_name: document.getElementById('h_name').value,
+            no_of_rooms: document.getElementById('h_rooms').value,
+            category: document.getElementById('h_category').value
+        };
+
+        if(!payload.hostel_name) {
+            alert("Please enter a hostel name.");
+            return;
+        }
+
+        fetch("/admin/add-hostel", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) {
+                alert(data.message);
+                document.getElementById('h_name').value = '';
+                document.getElementById('h_rooms').value = '';
+                loadHostelsTable();
+            } else {
+                alert(data.message || "Error adding hostel");
+            }
+        });
+    }
+
+    function loadHostelsTable() {
+        fetch('/admin/hostels')
+            .then(res => res.json())
+            .then(data => {
+                const table = document.getElementById("hostelTableBody");
+                table.innerHTML = data.map(h => `
+                    <tr>
+                        <td style="font-weight:600;">${h.hostel_name}</td>
+                        <td><span style="color:${h.category === 'Boys' ? '#3b82f6' : '#ec4899'}">${h.category}</span></td>
+                        <td>${h.no_of_rooms}</td>
+                        <td style="color:var(--emerald);">${h.vacancies}</td>
+                        <td>${h.warden_name || '<span style="color:var(--rose)">Unassigned</span>'}</td>
+                        <td>${h.mess_incharge_name || '<span style="color:var(--rose)">Unassigned</span>'}</td>
+                        <td>
+                            <button class="action-btn btn-pause" onclick="openEditHostelModal(${JSON.stringify(h).replace(/"/g, '&quot;')})">Edit</button>
+                        </td>
+                    </tr>
+                `).join("");
+            });
+    }
+
+    function openEditHostelModal(h) {
+        document.getElementById('editH_Id').value = h.id;
+        document.getElementById('editH_NameTitle').innerText = h.hostel_name;
+        document.getElementById('editH_Rooms').value = h.no_of_rooms;
+        document.getElementById('editH_Category').value = h.category;
+        
+        const modal = document.getElementById('editHostelModal');
+        modal.style.display = 'flex';
+
+        // Load Wardens
+        fetch('/admin/staff-by-role?role=Warden')
+            .then(res => res.json())
+            .then(wardens => {
+                const select = document.getElementById('editH_Warden');
+                if(wardens.length === 0) {
+                    select.innerHTML = '<option value="">No staff found</option>';
+                } else {
+                    select.innerHTML = '<option value="">Unassign Warden</option>';
+                    wardens.forEach(w => {
+                        const opt = document.createElement('option');
+                        opt.value = w.id;
+                        opt.innerText = w.name;
+                        if(w.id === h.warden_id) opt.selected = true;
+                        select.appendChild(opt);
+                    });
+                }
+            });
+
+        // Load Mess Incharges
+        fetch('/admin/staff-by-role?role=Mess incharge')
+            .then(res => res.json())
+            .then(staff => {
+                const select = document.getElementById('editH_Mess');
+                if(staff.length === 0) {
+                    select.innerHTML = '<option value="">No staff found</option>';
+                } else {
+                    select.innerHTML = '<option value="">Unassign Mess Incharge</option>';
+                    staff.forEach(s => {
+                        const opt = document.createElement('option');
+                        opt.value = s.id;
+                        opt.innerText = s.name;
+                        if(s.id === h.mess_incharge_id) opt.selected = true;
+                        select.appendChild(opt);
+                    });
+                }
+            });
+    }
+
+    function closeEditModal() {
+        document.getElementById('editHostelModal').style.display = 'none';
+    }
+
+    function updateHostel() {
+        const payload = {
+            id: document.getElementById('editH_Id').value,
+            no_of_rooms: document.getElementById('editH_Rooms').value,
+            category: document.getElementById('editH_Category').value,
+            warden_id: document.getElementById('editH_Warden').value,
+            mess_incharge_id: document.getElementById('editH_Mess').value
+        };
+
+        fetch("/admin/update-hostel", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) {
+                alert(data.message);
+                closeEditModal();
+                loadHostelsTable();
+            } else {
+                alert(data.message);
             }
         });
     }

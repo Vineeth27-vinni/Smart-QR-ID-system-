@@ -105,7 +105,17 @@ router.get("/get-courses", (req, res) => {
 /* COURSE CODE MAPPING */
 
 const { courseCodes } = require("../utils/courseMapping");
+const { departmentMapping } = require("../utils/departmentMapping");
 
+/* GET /student/courses - for registration dropdown (legacy or simple list) */
+router.get("/courses", (req, res) => {
+  res.json(Object.keys(courseCodes));
+});
+
+/* GET /student/departments-courses - for hierarchical dropdowns */
+router.get("/departments-courses", (req, res) => {
+  res.json(departmentMapping);
+});
 
 
 /* GET REGISTRATION PAGE */
@@ -152,7 +162,7 @@ router.post("/register",
       const {
         first_name, second_name, father_name, mother_name,
         gender, date_of_birth, mobile_number, email,
-        department, course,
+        department, course, hostel_preference,
         permanent_hno, permanent_street, permanent_city,
         permanent_district, permanent_state, permanent_pincode,
         correspondence_hno, correspondence_street, correspondence_city,
@@ -187,15 +197,17 @@ router.post("/register",
                 INSERT INTO students (
                   student_id, first_name, second_name, father_name, mother_name,
                   gender, date_of_birth, mobile_number, email, department, course,
+                  hostel_preference, hostel_application_status,
                   permanent_hno, permanent_street, permanent_city, permanent_district,
                   permanent_state, permanent_pincode,
                   correspondence_hno, correspondence_street, correspondence_city,
                   correspondence_district, correspondence_state, correspondence_pincode,
                   admission_year
-                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
               `, [
                 studentId, first_name, second_name, father_name, mother_name,
                 gender, date_of_birth, mobile_number, email, department, course,
+                hostel_preference || null, hostel_preference ? 'pending' : 'none',
                 permanent_hno, permanent_street, permanent_city, permanent_district,
                 permanent_state, permanent_pincode,
                 correspondence_hno, correspondence_street, correspondence_city,
@@ -614,6 +626,56 @@ router.get("/academics/data", isStudent, (req, res) => {
           results
         });
       });
+    });
+  });
+});
+
+/* GET /student/hostel/status */
+router.get("/hostel/status", isStudent, (req, res) => {
+  const student_id = req.session.student.student_id;
+  db.query(
+    "SELECT hostel_application_status as status, hostel_preference, assigned_hostel FROM students WHERE student_id = ?",
+    [student_id],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: "DB Error" });
+      res.json(results[0] || { status: 'none' });
+    }
+  );
+});
+
+/* POST /student/hostel/apply */
+router.post("/hostel/apply", isStudent, (req, res) => {
+  const { hostel_preference } = req.body;
+  const student_id = req.session.student.student_id;
+
+  if (!hostel_preference) return res.status(400).json({ message: "Hostel preference required" });
+
+  db.query(
+    "UPDATE students SET hostel_preference = ?, hostel_application_status = 'pending' WHERE student_id = ?",
+    [hostel_preference, student_id],
+    (err) => {
+      if (err) return res.status(500).json({ message: "Database error" });
+      res.json({ success: true, message: "Application submitted successfully!" });
+    }
+  );
+});
+
+/* GET /student/hostels/available - Filtered by gender */
+router.get("/hostels/available", isStudent, (req, res) => {
+  const student_id = req.session.student.student_id;
+  
+  // Get student gender first
+  db.query("SELECT gender FROM students WHERE student_id = ?", [student_id], (err, results) => {
+    if (err || results.length === 0) return res.status(500).json({ error: "Student not found" });
+    
+    const gender = results[0].gender;
+    let category = 'Boys';
+    if (gender === 'Female') category = 'Girls';
+    else if (gender === 'Other') category = 'Others';
+
+    db.query("SELECT hostel_name, vacancies FROM hostels WHERE category = ?", [category], (err, hostels) => {
+      if (err) return res.status(500).json({ error: "DB Error" });
+      res.json(hostels);
     });
   });
 });

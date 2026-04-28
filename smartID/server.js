@@ -8,6 +8,9 @@ const app = express();
 /* ROUTES */
 const studentRoutes = require("./routes/studentRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const staffRoutes = require("./routes/staffRoutes");
+const wardenRoutes = require("./routes/wardenRoutes");
+const messRoutes = require("./routes/messRoutes");
 
 
 /* MIDDLEWARE */
@@ -35,6 +38,13 @@ app.use("/admin", (req, res, next) => {
   next();
 });
 
+app.use("/staff", (req, res, next) => {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, private, max-age=0");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  next();
+});
+
 /* STATIC FILES */
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -42,6 +52,14 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 /* MOUNT ROUTES */
 app.use("/student", studentRoutes);
 app.use("/admin", adminRoutes);
+app.use("/staff", staffRoutes);
+app.use("/staff/warden", wardenRoutes);
+app.use("/staff/mess", messRoutes);
+
+/* Dashboard Redirection Routes */
+app.get("/staff/mess/dashboard", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/Staff/mess-dashboard.html"));
+});
 
 
 /* HOME */

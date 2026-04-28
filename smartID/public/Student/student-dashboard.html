@@ -27,6 +27,28 @@
     </div>
   </div>
 
+  <!-- ══ HOSTEL APPLICATION MODAL ══ -->
+  <div id="hostelModal" class="modal-overlay" onclick="closeHostelModal()">
+    <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 450px;">
+      <div class="modal-header">
+        <h2 class="modal-title">Hostel Application</h2>
+        <button class="modal-close" onclick="closeHostelModal()">&times;</button>
+      </div>
+      <div style="padding: 20px;">
+        <p style="color: var(--text-muted); margin-bottom: 20px;">Choose your preferred hostel for accommodation.</p>
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label style="display:block; margin-bottom:8px; font-weight:600;">Select Hostel</label>
+          <select id="hostelSelect" style="width:100%; padding:12px; background:#1e293b; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:white;">
+            <option value="">Loading hostels...</option>
+          </select>
+        </div>
+        <button class="qr-refresh-btn" style="width:100%; justify-content:center; background:var(--gold);" onclick="submitHostelApp()">
+          Submit Application
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- ══ TOPBAR ══ -->
   <header class="topbar">
     <div class="topbar-left">
@@ -231,6 +253,28 @@
           </div>
         </div>
       </a>
+
+      <!-- HOSTEL -->
+      <div class="module-card hostel" id="hostelModuleCard" onclick="handleHostelClick()">
+        <div class="module-card-header">
+          <div class="module-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+            </svg>
+          </div>
+          <div class="module-card-title">Hostel</div>
+          <div class="module-card-subtitle" id="hostelStatusBadge">Not Applied</div>
+        </div>
+        <div class="module-card-body">
+          <p id="assignedHostelName" style="font-size: 1.1rem; font-weight: 600; margin-bottom: 10px;">None</p>
+          <div class="module-cta" id="hostelCTA">
+            Apply for Room
+            <svg viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </div>
+        </div>
+      </div>
 
     </div>
 
@@ -525,17 +569,86 @@
       document.body.style.overflow = 'auto';
     }
 
-    function refreshQRCode() {
-      const id = document.getElementById('heroId').textContent;
-      if (id && id !== "—") {
-        generateQR(id);
-        const btn = document.querySelector('.qr-refresh-btn');
-        btn.classList.add('rotating');
-        setTimeout(() => btn.classList.remove('rotating'), 500);
+    /* ── HOSTEL LOGIC ── */
+    let studentHostelStatus = 'none';
+
+    function loadHostelStatus() {
+      fetch('/student/hostel/status')
+        .then(res => res.json())
+        .then(data => {
+          studentHostelStatus = data.status;
+          const badge = document.getElementById('hostelStatusBadge');
+          const assigned = document.getElementById('assignedHostelName');
+          const cta = document.getElementById('hostelCTA');
+
+          badge.textContent = data.status.charAt(0).toUpperCase() + data.status.slice(1);
+          assigned.textContent = data.assigned_hostel || data.hostel_preference || 'None';
+
+          if (data.status === 'none' || data.status === 'rejected') {
+            badge.className = 'stat-value red';
+            cta.innerHTML = 'Apply Now <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+          } else if (data.status === 'pending') {
+            badge.className = 'stat-value orange';
+            cta.innerHTML = 'View Status <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+          } else if (data.status === 'approved') {
+            badge.className = 'stat-value green';
+            cta.innerHTML = 'View Details <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+          }
+        });
+    }
+
+    function handleHostelClick() {
+      if (studentHostelStatus === 'none' || studentHostelStatus === 'rejected') {
+        openHostelModal();
+      } else {
+        alert("Your hostel application is " + studentHostelStatus + ". Stay tuned for more features!");
       }
     }
 
-    window.onload = loadStudent;
+    function openHostelModal() {
+      document.getElementById('hostelModal').classList.add('active');
+      const select = document.getElementById('hostelSelect');
+      select.innerHTML = '<option value="">Loading eligible hostels...</option>';
+
+      fetch('/student/hostels/available')
+        .then(res => res.json())
+        .then(data => {
+          if (data.length === 0) {
+            select.innerHTML = '<option value="">No hostels available for your gender</option>';
+            return;
+          }
+          select.innerHTML = '<option value="">Select Hostel</option>';
+          data.forEach(h => {
+            select.innerHTML += `<option value="${h.hostel_name}">${h.hostel_name} (${h.vacancies} left)</option>`;
+          });
+        });
+    }
+
+    function closeHostelModal() {
+      document.getElementById('hostelModal').classList.remove('active');
+    }
+
+    function submitHostelApp() {
+      const hostel = document.getElementById('hostelSelect').value;
+      if (!hostel) return alert("Please select a hostel");
+
+      fetch('/student/hostel/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ hostel_preference: hostel })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message);
+        closeHostelModal();
+        loadHostelStatus();
+      });
+    }
+
+    window.onload = () => {
+      loadStudent();
+      loadHostelStatus();
+    };
   </script>
 
 </body>

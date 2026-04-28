@@ -80,13 +80,7 @@
       <div class="form-group">
         <label>Department</label>
         <select id="department" name="department" onchange="updateCourses()" required>
-          <option value="">Select Department</option>
-          <option value="School of Computer and Information Science">School of Computer and Information Science</option>
-          <option value="School of Physics">School of Physics</option>
-          <option value="School of Chemistry">School of Chemistry</option>
-          <option value="School of Mathematics">School of Mathematics</option>
-          <option value="School of Life Sciences">School of Life Sciences</option>
-          <option value="School of Management">School of Management</option>
+          <option value="">Loading departments...</option>
         </select>
       </div>
 
@@ -95,6 +89,14 @@
         <select id="course" name="course" required>
           <option value="">Select Course (Select Department First)</option>
         </select>
+      </div>
+
+      <div class="form-group">
+        <label>Hostel Preference (Optional)</label>
+        <select id="hostel_preference" name="hostel_preference">
+          <option value="">No Hostel Required</option>
+        </select>
+        <small style="color: var(--text-muted);">Select a hostel if you wish to apply for accommodation.</small>
       </div>
 
       <!-- DOCUMENTS -->
@@ -232,21 +234,42 @@
       }
     });
 
+    let coursesByDepartment = {};
+
     window.onload = function() {
       const dobInput = document.querySelector('input[name="date_of_birth"]');
       const today = new Date();
       const maxDate = new Date(today.getFullYear() - 16, today.getMonth(), today.getDate());
       const formattedDate = maxDate.toISOString().split('T')[0];
       dobInput.setAttribute('max', formattedDate);
-    };
 
-    const coursesByDepartment = {
-      "School of Computer and Information Science": ["I.Mtech CSE", "M.Tech Computer Science-AI", "M.Tech Computer Science-Data Science", "M.Tech Computer Science", "PHD Computer Science"],
-      "School of Physics": ["B.Sc Physics", "M.Sc Physics", "PHD Physics"],
-      "School of Chemistry": ["B.Sc Chemistry", "M.Sc Chemistry", "PHD Chemistry"],
-      "School of Mathematics": ["B.Sc Mathematics", "M.Sc Mathematics", "PHD Mathematics"],
-      "School of Life Sciences": ["B.Sc Life Sciences", "M.Sc Life Sciences", "PHD Life Sciences"],
-      "School of Management": ["MBA"]
+      // Load Hostels
+      fetch('/admin/hostels')
+        .then(res => res.json())
+        .then(data => {
+          const dropdown = document.getElementById('hostel_preference');
+          data.forEach(h => {
+            const opt = document.createElement('option');
+            opt.value = h.hostel_name;
+            opt.innerText = h.hostel_name;
+            dropdown.appendChild(opt);
+          });
+        });
+
+      // Load Departments and Courses
+      fetch('/student/departments-courses')
+        .then(res => res.json())
+        .then(data => {
+          coursesByDepartment = data;
+          const deptDropdown = document.getElementById('department');
+          deptDropdown.innerHTML = '<option value="">Select Department</option>';
+          Object.keys(data).forEach(dept => {
+            const opt = document.createElement('option');
+            opt.value = dept;
+            opt.innerText = dept;
+            deptDropdown.appendChild(opt);
+          });
+        });
     };
 
     function updateCourses() {

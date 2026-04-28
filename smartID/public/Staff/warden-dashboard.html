@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warden Dashboard | SmartID</title>
+    <link rel="stylesheet" href="/Staff/CSS/warden-dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon">W</div>
+        <span>SmartID Warden</span>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a class="nav-item active" onclick="showSection('overview')" id="nav-overview">
+            <i>🏠</i> <span>Overview</span>
+        </a>
+        <a class="nav-item" onclick="showSection('applications')" id="nav-applications">
+            <i>📝</i> <span>Hostel Applications</span>
+        </a>
+        <a class="nav-item" onclick="showSection('students')" id="nav-students">
+            <i>👥</i> <span>Hostel Students</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <button class="logout-btn" style="background: #475569;" onclick="window.location.href='/'">Back to Home</button>
+    </div>
+</div>
+
+<div class="main">
+    <div class="topbar">
+        <h2 id="topbarTitle">Warden Overview</h2>
+        <div class="admin-info" id="wardenName">Warden</div>
+    </div>
+
+    <!-- OVERVIEW SECTION -->
+    <div class="section" id="section-overview" style="display:block;">
+        <div class="stats-grid">
+            <div class="stat-card card-blue">
+                <div class="icon-box">🏢</div>
+                <div class="label">Total Rooms</div>
+                <div class="value" id="stat-totalRooms">0</div>
+            </div>
+            <div class="stat-card card-amber">
+                <div class="icon-box">👤</div>
+                <div class="label">Occupied</div>
+                <div class="value" id="stat-occupied">0</div>
+            </div>
+            <div class="stat-card card-emerald">
+                <div class="icon-box">🔓</div>
+                <div class="label">Vacancies</div>
+                <div class="value" id="stat-vacancies">0</div>
+            </div>
+        </div>
+        
+        <h3>My Hostel: <span id="hostelNameDisplay" style="color: var(--primary);">Loading...</span></h3>
+        <p style="color: var(--text-muted);">Manage your hostel residents and process incoming room applications below.</p>
+    </div>
+
+    <!-- APPLICATIONS SECTION -->
+    <div class="section" id="section-applications">
+        <h3>Pending Hostel Applications</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Course</th>
+                        <th>Department</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="applicationsTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- STUDENTS SECTION -->
+    <div class="section" id="section-students">
+        <h3>Hostel Residents</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Course</th>
+                        <th>Mobile</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="studentTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    let wardenHostel = "";
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadWardenInfo();
+    });
+
+    function loadWardenInfo() {
+        fetch('/staff/me')
+            .then(res => res.json())
+            .then(data => {
+                if(data.name) document.getElementById('wardenName').innerText = data.name;
+                if(data.hostel) {
+                    wardenHostel = data.hostel;
+                    document.getElementById('hostelNameDisplay').innerText = wardenHostel;
+                    loadHostelStats();
+                }
+            });
+    }
+
+    function loadHostelStats() {
+        fetch(`/staff/warden/stats?hostel=${encodeURIComponent(wardenHostel)}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('stat-totalRooms').innerText = data.no_of_rooms || 0;
+                document.getElementById('stat-occupied').innerText = data.occupied || 0;
+                document.getElementById('stat-vacancies').innerText = data.vacancies || 0;
+            });
+    }
+
+    function showSection(name) {
+        document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+        document.getElementById("nav-" + name).classList.add("active");
+
+        document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+        document.getElementById("section-" + name).style.display = "block";
+
+        const titles = {
+            'overview': 'Warden Overview',
+            'applications': 'Hostel Applications',
+            'students': 'Hostel Residents'
+        };
+        document.getElementById("topbarTitle").innerText = titles[name];
+
+        if(name === "applications") loadApplications();
+        if(name === "students") loadStudents();
+        if(name === "overview") loadHostelStats();
+    }
+
+    function loadApplications() {
+        fetch(`/staff/warden/applications?hostel=${encodeURIComponent(wardenHostel)}`)
+            .then(res => res.json())
+            .then(data => {
+                const table = document.getElementById("applicationsTableBody");
+                if(data.length === 0) {
+                    table.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:30px;'>No pending applications</td></tr>";
+                    return;
+                }
+                table.innerHTML = data.map(s => `
+                    <tr>
+                        <td>${s.student_id}</td>
+                        <td>${s.first_name} ${s.second_name}</td>
+                        <td>${s.course}</td>
+                        <td>${s.department}</td>
+                        <td>
+                            <button class="action-btn btn-approve" onclick="processApp('${s.student_id}', 'approved')">Approve</button>
+                            <button class="action-btn btn-reject" onclick="processApp('${s.student_id}', 'rejected')">Reject</button>
+                        </td>
+                    </tr>
+                `).join("");
+            });
+    }
+
+    function loadStudents() {
+        fetch(`/staff/warden/residents?hostel=${encodeURIComponent(wardenHostel)}`)
+            .then(res => res.json())
+            .then(data => {
+                const table = document.getElementById("studentTableBody");
+                if(data.length === 0) {
+                    table.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:30px;'>No residents found</td></tr>";
+                    return;
+                }
+                table.innerHTML = data.map(s => `
+                    <tr>
+                        <td>${s.student_id}</td>
+                        <td>${s.first_name} ${s.second_name}</td>
+                        <td>${s.course}</td>
+                        <td>${s.mobile_number}</td>
+                        <td>
+                            <button class="action-btn btn-delete" onclick="removeResident('${s.student_id}')">Remove</button>
+                        </td>
+                    </tr>
+                `).join("");
+            });
+    }
+
+    function processApp(studentId, status) {
+        if(!confirm(`${status.toUpperCase()} this application?`)) return;
+        fetch("/staff/warden/process-application", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ student_id: studentId, status, hostel: wardenHostel })
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+            loadApplications();
+            loadHostelStats();
+        });
+    }
+
+    function removeResident(studentId) {
+        if(!confirm("Remove this student from the hostel?")) return;
+        fetch("/staff/warden/remove-resident", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ student_id: studentId, hostel: wardenHostel })
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+            loadStudents();
+            loadHostelStats();
+        });
+    }
+</script>
+
+</body>
+</html>

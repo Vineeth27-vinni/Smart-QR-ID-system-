@@ -4,6 +4,7 @@ const path    = require("path");
 const nodemailer = require("nodemailer");
 const db      = require("../db");
 const fs      = require("fs");
+const bcrypt  = require("bcryptjs");
 const { courseCodes } = require("../utils/courseMapping");
 require('dotenv').config();
 
@@ -31,6 +32,11 @@ function isAdmin(req, res, next) {
   return res.redirect("/Admin/admin-login.html?error=3");
 }
 
+function isSAdmin(req, res, next) {
+  if (req.session && req.session.admin && req.session.admin.role === 'sadmin') return next();
+  return res.status(403).json({ success: false, message: "Super Admin access required." });
+}
+
 /* POST /admin/login*/
 
 router.post("/login", (req, res) => {
@@ -42,7 +48,7 @@ router.post("/login", (req, res) => {
   }
 
   const query = `
-    SELECT admin_id, username
+    SELECT admin_id, username, role
     FROM admin_login
     WHERE username = ? AND password_hash = ?
   `;
@@ -61,7 +67,7 @@ router.post("/login", (req, res) => {
     req.session.admin = {
       admin_id: results[0].admin_id,
       username: results[0].username,
-      role:     "admin"
+      role:     results[0].role || "admin"
     };
 
     console.log(`Admin logged in: ${results[0].username}`);
@@ -83,7 +89,10 @@ router.get("/dashboard", isAdmin, (req, res) => {
 /* GET /admin/me*/
 
 router.get("/me", isAdmin, (req, res) => {
-  res.json({ username: req.session.admin.username });
+  res.json({ 
+    username: req.session.admin.username,
+    role:     req.session.admin.role
+  });
 });
 
 /* GET /admin/stats */
@@ -92,32 +101,27 @@ router.get("/stats", isAdmin, (req, res) => {
 
   const year = new Date().getFullYear();
 
-  db.query(`SELECT COUNT(*) AS total FROM students`, (err, r1) => {
+  db.query(`SELECT COUNT(*) AS total FROM students WHERE status = 'approved'`, (err, r1) => {
 
     if (err) return res.status(500).json({ error: "DB error" });
 
-    db.query(`SELECT COUNT(*) AS total FROM students WHERE admission_year = ?`, [year], (err, r2) => {
+    db.query(`SELECT COUNT(*) AS total FROM students WHERE admission_year = ? AND status = 'approved'`, [year], (err, r2) => {
 
       if (err) return res.status(500).json({ error: "DB error" });
 
-      db.query(`SELECT COUNT(*) AS total FROM admin_login`, (err, r3) => {
+      db.query(`SELECT (SELECT COUNT(*) FROM admin_login) + (SELECT COUNT(*) FROM staff) AS total`, (err, r3) => {
 
         if (err) return res.status(500).json({ error: "DB error" });
 
-        db.query(`
-          SELECT COUNT(*) AS total
-          FROM students s
-          LEFT JOIN student_login sl ON s.student_id = sl.student_id
-          WHERE sl.password_hash IS NULL
-        `, (err, r4) => {
+        db.query(`SELECT COUNT(*) AS total FROM students WHERE status = 'pending'`, (err, r4) => {
 
           if (err) return res.status(500).json({ error: "DB error" });
 
           res.json({
-            totalStudents:   r1[0].total,
-            thisYear:        r2[0].total,
-            totalStaff:      r3[0].total,
-            pendingPassword: r4[0].total
+            totalStudents:    r1[0].total,
+            thisYear:         r2[0].total,
+            totalStaff:       r3[0].total,
+            pendingApprovals: r4[0].total
           });
 
         });
@@ -146,6 +150,87 @@ router.get("/students", isAdmin, (req, res) => {
 
 });
 
+/* GET /admin/hostels */
+router.get("/hostels", isAdmin, (req, res) => {
+  db.query(
+    `SELECT h.*, s1.name as warden_name, s2.name as mess_incharge_name 
+     FROM hostels h 
+     LEFT JOIN staff s1 ON h.warden_id = s1.id 
+     LEFT JOIN staff s2 ON h.mess_incharge_id = s2.id`, 
+    (err, results) => {
+      if (err) return res.status(500).json({ error: "DB error" });
+      res.json(results);
+    }
+  );
+});
+
+/* GET /admin/staff-by-role */
+router.get("/staff-by-role", isAdmin, (req, res) => {
+  const { role } = req.query;
+  db.query(`SELECT id, name FROM staff WHERE role = ?`, [role], (err, results) => {
+    if (err) return res.status(500).json({ error: "DB error" });
+    res.json(results);
+  });
+});
+
+/* POST /admin/add-hostel (Super Admin only) */
+router.post("/add-hostel", isSAdmin, (req, res) => {
+  const { hostel_name, no_of_rooms, category } = req.body;
+
+  if (!hostel_name) {
+    return res.json({ success: false, message: "Hostel name is required." });
+  }
+
+  db.query(
+    `INSERT INTO hostels (hostel_name, no_of_rooms, vacancies, category) VALUES (?, ?, ?, ?)`,
+    [hostel_name, no_of_rooms || 0, no_of_rooms || 0, category || 'Boys'],
+    (err) => {
+      if (err) {
+        if (err.code === "ER_DUP_ENTRY") return res.json({ success: false, message: "Hostel already exists." });
+        console.error("Add hostel error:", err);
+        return res.json({ success: false, message: "Database error." });
+      }
+      res.json({ success: true, message: "Hostel added successfully!" });
+    }
+  );
+});
+
+/* POST /admin/update-hostel (Super Admin only) */
+router.post("/update-hostel", isSAdmin, (req, res) => {
+  const { id, no_of_rooms, category, warden_id, mess_incharge_id } = req.body;
+
+  db.query(`SELECT occupied FROM hostels WHERE id = ?`, [id], (err, results) => {
+    if (err || results.length === 0) return res.status(500).json({ success: false, message: "Hostel not found" });
+    
+    const occupied = results[0].occupied;
+    const newVacancies = no_of_rooms - occupied;
+
+    if (newVacancies < 0) {
+      return res.status(400).json({ success: false, message: "New room count cannot be less than current residents." });
+    }
+
+    db.query(
+      `UPDATE hostels SET no_of_rooms = ?, vacancies = ?, category = ?, warden_id = ?, mess_incharge_id = ? WHERE id = ?`,
+      [no_of_rooms, newVacancies, category, warden_id || null, mess_incharge_id || null, id],
+      (err) => {
+        if (err) {
+          console.error("Update hostel error:", err);
+          return res.status(500).json({ success: false, message: "Database error" });
+        }
+        res.json({ success: true, message: "Hostel updated successfully!" });
+      }
+    );
+  });
+});
+
+/* GET /admin/all-staff */
+router.get("/all-staff", isAdmin, (req, res) => {
+  db.query(`SELECT id, staff_id, name, email, username, role, department, hostel FROM staff`, (err, results) => {
+    if (err) return res.status(500).json({ error: "DB error" });
+    res.json(results);
+  });
+});
+
 /* GET /admin/student/:student_id */
 
 router.get("/student/:student_id", isAdmin, (req, res) => {
@@ -168,32 +253,73 @@ router.get("/student/:student_id", isAdmin, (req, res) => {
 
 router.post("/add-staff", isAdmin, (req, res) => {
 
-  const { name, username, password, role, department, email } = req.body;
+  const { name, username, password, role, department, hostel, email } = req.body;
 
   if (!name || !username || !password || !role) {
     return res.json({ success: false, message: "Name, username, password and role are required." });
   }
 
-  if (role !== "admin" && role !== "staff") {
+  const rolePrefixes = {
+    "Warden": "WA",
+    "Faculty": "FAH",
+    "Mess incharge": "MEE",
+    "Office admin": "OFA",
+    "Librarian": "LIB"
+  };
+
+  if (role === "admin") {
+    db.query(
+      `INSERT INTO admin_login (username, password_hash) VALUES (?, ?)`,
+      [username, password],
+      (err) => {
+        if (err) {
+          if (err.code === "ER_DUP_ENTRY") return res.json({ success: false, message: "Username already exists." });
+          return res.json({ success: false, message: "Database error." });
+        }
+        res.json({ success: true });
+      }
+    );
+  } else if (rolePrefixes[role]) {
+    const prefix = rolePrefixes[role];
+    const pattern = `${prefix}%`;
+    const saltRounds = 10;
+
+    // Generate Staff ID
+    db.query(`SELECT staff_id FROM staff WHERE staff_id LIKE ? ORDER BY staff_id DESC LIMIT 1`, [pattern], async (err, results) => {
+      if (err) return res.json({ success: false, message: "Database error." });
+
+      let nextSeq = 1;
+      if (results.length > 0) {
+        const lastId = results[0].staff_id;
+        const lastSeq = parseInt(lastId.replace(prefix, ""));
+        if (!isNaN(lastSeq)) nextSeq = lastSeq + 1;
+      }
+
+      const staffId = `${prefix}${nextSeq.toString().padStart(3, '0')}`;
+      
+      try {
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        db.query(
+          `INSERT INTO staff (staff_id, name, email, username, password_hash, role, department, hostel) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          [staffId, name, email, username, hashedPassword, role, department || null, hostel || null],
+          (err) => {
+            if (err) {
+              if (err.code === "ER_DUP_ENTRY") return res.json({ success: false, message: "Username already exists." });
+              console.error("Add staff error:", err);
+              return res.json({ success: false, message: "Database error." });
+            }
+            res.json({ success: true, staff_id: staffId });
+          }
+        );
+      } catch (hashErr) {
+        console.error("Hashing error:", hashErr);
+        res.json({ success: false, message: "Server error during registration." });
+      }
+    });
+  } else {
     return res.json({ success: false, message: "Invalid role selected." });
   }
-
-  const table = role === "admin" ? "admin_login" : "staff_login";
-
-  db.query(
-    `INSERT INTO ${table} (username, password_hash) VALUES (?, ?)`,
-    [username, password],
-    (err) => {
-      if (err) {
-        if (err.code === "ER_DUP_ENTRY") {
-          return res.json({ success: false, message: "Username already exists." });
-        }
-        console.error("Add staff error:", err);
-        return res.json({ success: false, message: "Database error." });
-      }
-      res.json({ success: true });
-    }
-  );
 
 });
 

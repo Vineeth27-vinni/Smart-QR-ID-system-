@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Staff Portal | SmartID</title>
-  <link rel="stylesheet" href="CSS/dashboard.css">
+  <link rel="stylesheet" href="/Staff/CSS/dashboard.css">
 </head>
 
 <body>
@@ -14,6 +14,9 @@
   <header class="topbar">
     <div class="logo">SmartID</div>
     <div class="title">Staff Portal</div>
+    <div class="user-actions">
+      <a href="/" style="color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 0.9rem;">← Back to Home</a>
+    </div>
   </header>
 
   <!-- HERO -->
@@ -46,9 +49,32 @@
   </section>
 
   <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('/staff/me')
+        .then(res => {
+          if (!res.ok) throw new Error('Not logged in');
+          return res.json();
+        })
+        .then(data => {
+          if (data.name) {
+            document.querySelector('.hero h1').innerText = `Welcome, ${data.name}`;
+            document.querySelector('.hero p').innerText = `${data.role} | ${data.hostel || 'No Hostel Assigned'}`;
+          }
+        })
+        .catch(err => {
+          // Gracefully handle not being logged in - just show default landing info
+          console.log("Not logged in as staff, showing landing page.");
+        });
+    });
+
     function navigate(role) {
-      // Replace with your actual routes
-      window.location.href = `/staff/${role}`;
+      if (role === 'warden') {
+        window.location.href = "/Staff/warden-login.html";
+      } else if (role === 'nonTeaching') {
+        window.location.href = "/Staff/non-teaching-login.html";
+      } else {
+        alert(role.charAt(0).toUpperCase() + role.slice(1) + " portal is coming soon!");
+      }
     }
   </script>
 
